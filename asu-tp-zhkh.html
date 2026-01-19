@@ -1332,6 +1332,7 @@
             };
 
             if (chatForm) {
+                const sessionId = Math.random().toString(36).substring(7);
                 chatForm.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const message = chatInput.value.trim();
@@ -1363,7 +1364,7 @@
                         const response = await fetch('/api/chat', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ message })
+                            body: JSON.stringify({ message, sessionId })
                         });
 
                         const data = await response.json();

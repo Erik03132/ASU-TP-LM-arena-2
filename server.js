@@ -6,6 +6,10 @@ const PORT = 5000;
 
 app.use(express.json());
 
+// In-memory storage for session history (for demonstration/simple use)
+// In production, use a database or Redis
+const sessions = new Map();
+
 app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   next();
@@ -13,8 +17,8 @@ app.use((req, res, next) => {
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message } = req.body;
-    console.log('Incoming message:', message);
+    const { message, sessionId = 'default' } = req.body;
+    console.log(`Incoming message for session ${sessionId}:`, message);
 
     if (!message) {
       return res.status(400).json({ error: 'No message provided' });
@@ -26,7 +30,46 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const key = process.env.PERPLEXITY_API_KEY.trim().replace(/^["']|["']$/g, '');
-    console.log(`Using key starting with: ${key.substring(0, 8)}... and ending with: ...${key.substring(key.length - 4)}`);
+
+    // Get or initialize session history
+    if (!sessions.has(sessionId)) {
+      sessions.set(sessionId, [
+        {
+          role: 'system',
+          content: `Стиль ответа:
+Отвечай кратко: 1–3 предложения, без “воды” и маркетинга.
+Используй профессиональные, но понятные термины, избегай жаргона и сложных аббревиатур без расшифровки.
+Сначала давай прямой ответ, затем при необходимости 1 уточнение или пример.
+
+Работа с вопросом:
+Если вопрос общий (“что такое…?”) — дай чёткое определение и 1–2 ключевых эффекта (надёжность, безопасность, экономия).
+Если вопрос прикладной (“можно ли у нас…?”) — ответь да/нет/зависит и укажи от каких факторов (тип производства, существующая система, требования безопасности).
+При неясном вопросе задай один уточняющий вопрос: “Уточните, пожалуйста: …”.
+
+Использование информации из интернета:
+Из внешних источников бери только ядро смысла: 1–2 главные идеи без деталей реализации.
+Не копируй текст целиком, формулируй ответ своими словами в деловом стиле.
+Никогда не ссылайся на конкретные сайты и бренды, кроме случаев, когда клиент прямо спрашивает о них.
+
+Ограничения и эскалация:
+Если нет уверенности в ответе — так и скажи и предложи консультацию инженера: “Этот вопрос требует анализа объекта, рекомендую обсудить с инженером‑проектировщиком.”
+Для сложных запросов (проектирование, выбор ПЛК/SCADA, безопасность) всегда предлагай связаться с живым специалистом или оставить контакты.
+
+Структура типового ответа:
+1‑я фраза: сущность ответа (что / можно ли / как).
+2‑я фраза: ключевой эффект или условие.
+3‑я фраза (при необходимости): предложение следующего шага (аудит, консультация, коммерческое предложение).`
+        }
+      ]);
+    }
+
+    const history = sessions.get(sessionId);
+    history.push({ role: 'user', content: message });
+
+    // Keep history manageable (e.g., last 10 messages + system prompt)
+    if (history.length > 11) {
+      history.splice(1, history.length - 11);
+    }
 
     const apiRes = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
@@ -36,21 +79,13 @@ app.post('/api/chat', async (req, res) => {
       },
       body: JSON.stringify({
         model: 'sonar',
-        messages: [
-          {
-            role: 'system',
-            content:
-              'Ты — AI-ассистент компании АСУ ТП Системы, специализируешься на автоматизации технологических процессов. Отвечай кратко (3–5 предложений), по делу, на русском языке.',
-          },
-          { role: 'user', content: message },
-        ],
+        messages: history,
         max_tokens: 400,
         temperature: 0.7,
       }),
     });
 
     const responseData = await apiRes.text();
-    console.log('Perplexity API response status:', apiRes.status);
     
     if (!apiRes.ok) {
       console.error('Perplexity API error details:', responseData);
@@ -60,12 +95,11 @@ app.post('/api/chat', async (req, res) => {
     const data = JSON.parse(responseData);
     let reply = data.choices?.[0]?.message?.content || 'Нет ответа от модели.';
 
-    // Remove markdown bold (**)
-    reply = reply.replace(/\*\*/g, '');
-    // Remove citations [1], [2], etc.
-    reply = reply.replace(/\[\d+\]/g, '');
-    // Remove other potential markdown artifacts
-    reply = reply.trim();
+    // Clean reply
+    reply = reply.replace(/\*\*/g, '').replace(/\[\d+\]/g, '').trim();
+
+    // Add reply to history
+    history.push({ role: 'assistant', content: reply });
 
     res.status(200).json({ reply });
   } catch (e) {
