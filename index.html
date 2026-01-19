@@ -2041,64 +2041,167 @@
                 }
             }
         }
-        
-        function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `flex gap-3 chat-message-appear ${sender === 'user' ? 'justify-end' : ''}`;
-            
-            if (sender === 'bot') {
-                messageDiv.innerHTML = `
-                    <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-robot text-white text-sm"></i>
-                    </div>
-                    <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-                        <p class="text-slate-200 text-sm whitespace-pre-wrap">${escapeHtml(text)}</p>
-                    </div>
-                `;
-            } else {
-                messageDiv.innerHTML = `
-                    <div class="bg-sky-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%]">
-                        <p class="text-white text-sm">${escapeHtml(text)}</p>
-                    </div>
-                `;
-            }
-            
-            chatbotMessages.appendChild(messageDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-        }
-        
-        function showTyping() {
-            const id = 'typing-' + Date.now();
-            const typingDiv = document.createElement('div');
-            typingDiv.id = id;
-            typingDiv.className = 'flex gap-3 chat-message-appear';
-            typingDiv.innerHTML = `
-                <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-robot text-white text-sm"></i>
-                </div>
-                <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3">
-                    <div class="typing-indicator flex gap-1">
-                        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
-                        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
-                        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
-                    </div>
-                </div>
-            `;
-            chatbotMessages.appendChild(typingDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            return id;
-        }
-        
-        function removeTyping(id) {
-            const el = document.getElementById(id);
-            if (el) el.remove();
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+      // === Chatbot functionality через /api/chat ===
+const chatbotToggle = document.getElementById('chatbot-toggle');
+const chatbotWindow = document.getElementById('chatbot-window');
+const chatbotClose = document.getElementById('chatbot-close');
+const chatbotIcon = document.getElementById('chatbot-icon');
+const chatbotMessages = document.getElementById('chatbot-messages');
+const chatbotInput = document.getElementById('chatbot-input');
+const chatbotSend = document.getElementById('chatbot-send');
+
+let isOpen = false;
+
+// API‑ключ во фронте больше не нужен
+function enableChat() {
+  chatbotInput.disabled = false;
+  chatbotSend.disabled = false;
+  if (isOpen) {
+    chatbotInput.focus();
+  }
+}
+
+function disableChat() {
+  chatbotInput.disabled = true;
+  chatbotSend.disabled = true;
+}
+
+enableChat();
+
+// Открытие / закрытие окна чата
+chatbotToggle.addEventListener('click', () => {
+  isOpen = !isOpen;
+  if (isOpen) {
+    chatbotWindow.classList.remove('hidden');
+    chatbotIcon.classList.remove('fa-comments');
+    chatbotIcon.classList.add('fa-times');
+    chatbotInput.focus();
+  } else {
+    closeChat();
+  }
+});
+
+if (chatbotClose) {
+  chatbotClose.addEventListener('click', closeChat);
+}
+
+function closeChat() {
+  isOpen = false;
+  chatbotWindow.classList.add('closing');
+  setTimeout(() => {
+    chatbotWindow.classList.add('hidden');
+    chatbotWindow.classList.remove('closing');
+  }, 200);
+  chatbotIcon.classList.remove('fa-times');
+  chatbotIcon.classList.add('fa-comments');
+}
+
+// Отправка сообщений
+chatbotSend.addEventListener('click', sendMessage);
+chatbotInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+async function sendMessage() {
+  const message = chatbotInput.value.trim();
+  if (!message) return;
+
+  addMessage(message, 'user');
+  chatbotInput.value = '';
+
+  const typingId = showTyping();
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    removeTyping(typingId);
+
+    if (!response.ok) {
+      throw new Error('API Error: ' + response.status);
+    }
+
+    const data = await response.json();
+    const botMessage =
+      data.reply || 'Извините, не удалось получить ответ.';
+    addMessage(botMessage, 'bot');
+  } catch (error) {
+    removeTyping(typingId);
+    console.error('Chatbot error:', error);
+    addMessage(
+      '❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.',
+      'bot'
+    );
+  }
+}
+
+function addMessage(text, sender) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className =
+    'flex gap-3 chat-message-appear ' +
+    (sender === 'user' ? 'justify-end' : '');
+
+  if (sender === 'bot') {
+    messageDiv.innerHTML = `
+      <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-robot text-white text-sm"></i>
+      </div>
+      <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
+        <p class="text-slate-200 text-sm whitespace-pre-wrap">${escapeHtml(text)}</p>
+      </div>
+    `;
+  } else {
+    messageDiv.innerHTML = `
+      <div class="bg-sky-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%]">
+        <p class="text-white text-sm">${escapeHtml(text)}</p>
+      </div>
+    `;
+  }
+
+  chatbotMessages.appendChild(messageDiv);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+function showTyping() {
+  const id = 'typing-' + Date.now();
+  const typingDiv = document.createElement('div');
+  typingDiv.id = id;
+  typingDiv.className = 'flex gap-3 chat-message-appear';
+  typingDiv.innerHTML = `
+    <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+      <i class="fas fa-robot text-white text-sm"></i>
+    </div>
+    <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3">
+      <div class="typing-indicator flex gap-1">
+        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
+        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
+        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
+      </div>
+    </div>
+  `;
+  chatbotMessages.appendChild(typingDiv);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  return id;
+}
+
+function removeTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}     
     </script>
 </body>
 </html>
