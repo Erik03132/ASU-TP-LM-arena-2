@@ -1758,450 +1758,58 @@
     </script>
     
     <!-- AI Chatbot Widget -->
-    <div id="chatbot-widget">
-        <!-- Chat Toggle Button -->
-        <button id="chatbot-toggle" class="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full shadow-2xl shadow-sky-500/40 flex items-center justify-center z-50 hover:scale-110 transition-all duration-300 group">
-            <i id="chatbot-icon" class="fas fa-comments text-2xl text-white group-hover:scale-110 transition-transform"></i>
-            <span class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900 animate-pulse"></span>
-        </button>
-        
-        <!-- Chat Window -->
-        <div id="chatbot-window" class="fixed bottom-24 right-6 w-96 max-w-[calc(100vw-2rem)] bg-slate-800/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/50 border border-slate-700/80 z-50 hidden overflow-hidden" style="max-height: calc(100vh - 150px);">
-            <!-- Chat Header -->
-            <div class="bg-gradient-to-r from-sky-600 to-blue-700 px-5 py-4 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                        <i class="fas fa-robot text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <div class="font-bold text-white">АСУ ТП Ассистент</div>
-                        <div class="text-xs text-sky-200 flex items-center gap-1">
-                            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                            Онлайн • Поиск в интернете
-                        </div>
-                    </div>
-                </div>
-                <button id="chatbot-close" class="w-8 h-8 rounded-lg hover:bg-white/20 flex items-center justify-center transition-colors">
-                    <i class="fas fa-times text-white"></i>
-                </button>
-            </div>
-            
-            <!-- API Key Section (hidden - key is pre-configured) -->
-            <div id="api-key-section" class="p-4 border-b border-slate-700/50 bg-slate-900/50" style="display: none;">
-                <div class="text-sm text-slate-300 mb-2">
-                    <i class="fas fa-key text-amber-400 mr-2"></i>
-                    API ключ настроен
-                </div>
-            </div>
-            
-            <!-- Chat Messages -->
-            <div id="chatbot-messages" class="h-80 overflow-y-auto p-4 space-y-4 scroll-smooth">
-                <!-- Welcome Message -->
-                <div class="flex gap-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-robot text-white text-sm"></i>
-                    </div>
-                    <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-                        <p class="text-slate-200 text-sm">Здравствуйте! 👋 Я AI-ассистент компании АСУ ТП. Могу ответить на вопросы об автоматизации, промышленных системах управления, SCADA и ПЛК. Задайте ваш вопрос!</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Chat Input -->
-            <div class="p-4 border-t border-slate-700/50 bg-slate-900/50">
-                <div class="flex gap-2">
-                    <input type="text" id="chatbot-input" placeholder="Задайте вопрос..." class="flex-1 bg-slate-700 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all" disabled>
-                    <button id="chatbot-send" class="bg-sky-500 hover:bg-sky-600 disabled:bg-slate-600 disabled:cursor-not-allowed px-5 py-3 rounded-xl font-medium transition-all hover:shadow-lg hover:shadow-sky-500/30 disabled:shadow-none" disabled>
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <div class="text-xs text-slate-500 mt-2 text-center">
-                    Ответы генерируются AI с поиском в интернете
-                </div>
-            </div>
-        </div>
+   <!-- Chatbot widget -->
+<div id="chatbot-window" class="hidden fixed bottom-24 right-6 w-96 max-w-full bg-slate-900/95 border border-slate-700 rounded-3xl shadow-2xl overflow-hidden z-40">
+  <div class="flex items-center justify-between px-4 py-3 border-b border-slate-700 bg-slate-800/90">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center">
+        <i class="fas fa-robot text-white text-sm"></i>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-white">AI‑помощник АСУ ТП</div>
+        <div class="text-xs text-slate-400">Отвечает на вопросы о наших решениях</div>
+      </div>
     </div>
-    
-    <style>
-        /* Chatbot Animations */
-        #chatbot-window {
-            animation: chatWindowSlide 0.3s ease;
-        }
-        
-        @keyframes chatWindowSlide {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        #chatbot-window.closing {
-            animation: chatWindowClose 0.2s ease forwards;
-        }
-        
-        @keyframes chatWindowClose {
-            from {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-        }
-        
-        .chat-message-appear {
-            animation: messageAppear 0.3s ease;
-        }
-        
-        @keyframes messageAppear {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .typing-indicator span {
-            animation: typingBounce 1.4s ease-in-out infinite;
-        }
-        
-        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typingBounce {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-8px); }
-        }
-        
-        #chatbot-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        #chatbot-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        
-        #chatbot-messages::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 3px;
-        }
-        
-        #chatbot-messages::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-        
-        #chatbot-toggle {
-            animation: pulseBtn 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulseBtn {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); }
-            50% { box-shadow: 0 0 0 15px rgba(56, 189, 248, 0); }
-        }
-    </style>
-    
-    <script>
-        // Chatbot functionality
-        const chatbotToggle = document.getElementById('chatbot-toggle');
-        const chatbotWindow = document.getElementById('chatbot-window');
-        const chatbotClose = document.getElementById('chatbot-close');
-        const chatbotIcon = document.getElementById('chatbot-icon');
-        const chatbotMessages = document.getElementById('chatbot-messages');
-        const chatbotInput = document.getElementById('chatbot-input');
-        const chatbotSend = document.getElementById('chatbot-send');
-        const apiKeySection = document.getElementById('api-key-section');
-        const apiKeyInput = document.getElementById('api-key-input');
-        const apiKeySave = document.getElementById('api-key-save');
-        
-        let apiKey = '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';
-        let isOpen = false;
-        
-        // API key is pre-configured, enable chat immediately
-        function initChat() {
-            apiKeySection.style.display = 'none';
-            chatbotInput.disabled = false;
-            chatbotSend.disabled = false;
-        }
-        
-        // Initialize on load
-        initChat();
-        
-        function enableChat() {
-            apiKeySection.style.display = 'none';
-            chatbotInput.disabled = false;
-            chatbotSend.disabled = false;
-            if (isOpen) {
-                chatbotInput.focus();
-            }
-        }
-        
-        // Toggle chat window
-        chatbotToggle.addEventListener('click', () => {
-            isOpen = !isOpen;
-            if (isOpen) {
-                chatbotWindow.classList.remove('hidden');
-                chatbotIcon.classList.remove('fa-comments');
-                chatbotIcon.classList.add('fa-times');
-                if (apiKey) chatbotInput.focus();
-            } else {
-                closeChat();
-            }
-        });
-        
-        chatbotClose.addEventListener('click', closeChat);
-        
-        function closeChat() {
-            isOpen = false;
-            chatbotWindow.classList.add('closing');
-            setTimeout(() => {
-                chatbotWindow.classList.add('hidden');
-                chatbotWindow.classList.remove('closing');
-            }, 200);
-            chatbotIcon.classList.remove('fa-times');
-            chatbotIcon.classList.add('fa-comments');
-        }
-        
-        // Send message
-        chatbotSend.addEventListener('click', sendMessage);
-        chatbotInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-        
-        async function sendMessage() {
-            const message = chatbotInput.value.trim();
-            if (!message || !apiKey) return;
-            
-            // Add user message
-            addMessage(message, 'user');
-            chatbotInput.value = '';
-            
-            // Show typing indicator
-            const typingId = showTyping();
-            
-            try {
-                const response = await fetch('https://api.perplexity.ai/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: 'llama-3.1-sonar-small-128k-online',
-                        messages: [
-                            {
-                                role: 'system',
-                                content: 'Ты — AI-ассистент компании АСУ ТП Системы, специализирующейся на автоматизации технологических процессов. Отвечай кратко (3-5 предложений), по делу, на русском языке. Используй актуальную информацию из интернета. Будь дружелюбным и профессиональным. Если вопрос не связан с АСУ ТП, автоматизацией, SCADA, ПЛК или промышленностью — вежливо перенаправь к теме.'
-                            },
-                            {
-                                role: 'user',
-                                content: message
-                            }
-                        ],
-                        max_tokens: 300,
-                        temperature: 0.7
-                    })
-                });
-                
-                removeTyping(typingId);
-                
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const botMessage = data.choices[0]?.message?.content || 'Извините, не удалось получить ответ.';
-                addMessage(botMessage, 'bot');
-                
-            } catch (error) {
-                removeTyping(typingId);
-                console.error('Chatbot error:', error);
-                
-                if (error.message.includes('401') || error.message.includes('403')) {
-                    addMessage('❌ Неверный API ключ. Пожалуйста, проверьте и обновите ключ.', 'bot');
-                    apiKey = '';
-                    try { localStorage.removeItem('perplexity_api_key'); } catch(e) {}
-                    disableChat();
-                    apiKeyInput.value = '';
-                } else if (error.message.includes('429')) {
-                    addMessage('⚠️ Превышен лимит запросов. Пожалуйста, подождите минуту и попробуйте снова.', 'bot');
-                } else {
-                    addMessage('❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.', 'bot');
-                }
-            }
-        }
-      // === Chatbot functionality через /api/chat ===
-const chatbotToggle = document.getElementById('chatbot-toggle');
-const chatbotWindow = document.getElementById('chatbot-window');
-const chatbotClose = document.getElementById('chatbot-close');
-const chatbotIcon = document.getElementById('chatbot-icon');
-const chatbotMessages = document.getElementById('chatbot-messages');
-const chatbotInput = document.getElementById('chatbot-input');
-const chatbotSend = document.getElementById('chatbot-send');
-
-let isOpen = false;
-
-// API‑ключ во фронте больше не нужен
-function enableChat() {
-  chatbotInput.disabled = false;
-  chatbotSend.disabled = false;
-  if (isOpen) {
-    chatbotInput.focus();
-  }
-}
-
-function disableChat() {
-  chatbotInput.disabled = true;
-  chatbotSend.disabled = true;
-}
-
-enableChat();
-
-// Открытие / закрытие окна чата
-chatbotToggle.addEventListener('click', () => {
-  isOpen = !isOpen;
-  if (isOpen) {
-    chatbotWindow.classList.remove('hidden');
-    chatbotIcon.classList.remove('fa-comments');
-    chatbotIcon.classList.add('fa-times');
-    chatbotInput.focus();
-  } else {
-    closeChat();
-  }
-});
-
-if (chatbotClose) {
-  chatbotClose.addEventListener('click', closeChat);
-}
-
-function closeChat() {
-  isOpen = false;
-  chatbotWindow.classList.add('closing');
-  setTimeout(() => {
-    chatbotWindow.classList.add('hidden');
-    chatbotWindow.classList.remove('closing');
-  }, 200);
-  chatbotIcon.classList.remove('fa-times');
-  chatbotIcon.classList.add('fa-comments');
-}
-
-// Отправка сообщений
-chatbotSend.addEventListener('click', sendMessage);
-chatbotInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-async function sendMessage() {
-  const message = chatbotInput.value.trim();
-  if (!message) return;
-
-  addMessage(message, 'user');
-  chatbotInput.value = '';
-
-  const typingId = showTyping();
-
-  try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message }),
-    });
-
-    removeTyping(typingId);
-
-    if (!response.ok) {
-      throw new Error('API Error: ' + response.status);
-    }
-
-    const data = await response.json();
-    const botMessage =
-      data.reply || 'Извините, не удалось получить ответ.';
-    addMessage(botMessage, 'bot');
-  } catch (error) {
-    removeTyping(typingId);
-    console.error('Chatbot error:', error);
-    addMessage(
-      '❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.',
-      'bot'
-    );
-  }
-}
-
-function addMessage(text, sender) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className =
-    'flex gap-3 chat-message-appear ' +
-    (sender === 'user' ? 'justify-end' : '');
-
-  if (sender === 'bot') {
-    messageDiv.innerHTML = `
+    <button id="chatbot-close" class="text-slate-400 hover:text-white transition-colors">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="h-72 max-h-[60vh] overflow-y-auto p-4 space-y-3 bg-slate-900" id="chatbot-messages">
+    <div class="flex gap-3">
       <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
         <i class="fas fa-robot text-white text-sm"></i>
       </div>
-      <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
-        <p class="text-slate-200 text-sm whitespace-pre-wrap">${escapeHtml(text)}</p>
-      </div>
-    `;
-  } else {
-    messageDiv.innerHTML = `
-      <div class="bg-sky-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-[80%]">
-        <p class="text-white text-sm">${escapeHtml(text)}</p>
-      </div>
-    `;
-  }
-
-  chatbotMessages.appendChild(messageDiv);
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-}
-
-function showTyping() {
-  const id = 'typing-' + Date.now();
-  const typingDiv = document.createElement('div');
-  typingDiv.id = id;
-  typingDiv.className = 'flex gap-3 chat-message-appear';
-  typingDiv.innerHTML = `
-    <div class="w-8 h-8 bg-gradient-to-br from-sky-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-      <i class="fas fa-robot text-white text-sm"></i>
-    </div>
-    <div class="bg-slate-700/50 rounded-2xl rounded-tl-md px-4 py-3">
-      <div class="typing-indicator flex gap-1">
-        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
-        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
-        <span class="w-2 h-2 bg-slate-400 rounded-full"></span>
+      <div class="bg-slate-700/60 rounded-2xl rounded-tl-md px-4 py-3 max-w-[80%]">
+        <p class="text-slate-200 text-sm">
+          Здравствуйте! Я AI‑ассистент компании «АСУ ТП Системы». Задайте вопрос о наших услугах или автоматизации процессов.
+        </p>
       </div>
     </div>
-  `;
-  chatbotMessages.appendChild(typingDiv);
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-  return id;
-}
+  </div>
+  <div class="border-t border-slate-700 bg-slate-800/95 px-3 py-3">
+    <div class="flex items-center gap-2">
+      <textarea
+        id="chatbot-input"
+        rows="1"
+        class="flex-1 resize-none bg-slate-900/80 border border-slate-700 rounded-2xl px-3 py-2 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-sky-500"
+        placeholder="Напишите ваш вопрос..."
+      ></textarea>
+      <button
+        id="chatbot-send"
+        class="w-10 h-10 rounded-full bg-sky-500 hover:bg-sky-600 flex items-center justify-center text-white transition-colors"
+      >
+        <i class="fas fa-paper-plane text-sm"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-function removeTyping(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}     
+<button
+  id="chatbot-toggle"
+  class="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-sky-500 hover:bg-sky-600 text-white shadow-xl shadow-sky-500/30 flex items-center justify-center z-40"
+>
+  <i id="chatbot-icon" class="fas fa-comments text-xl"></i>
+</button>
     </script>
 </body>
 </html>
