@@ -25,10 +25,13 @@ app.post('/api/chat', async (req, res) => {
       return res.status(500).json({ error: 'API key configuration error' });
     }
 
+    const key = process.env.PERPLEXITY_API_KEY.trim().replace(/^["']|["']$/g, '');
+    console.log(`Using key starting with: ${key.substring(0, 8)}... and ending with: ...${key.substring(key.length - 4)}`);
+
     const apiRes = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY.trim().replace(/^["']|["']$/g, '')}`,
+        'Authorization': `Bearer ${key}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
