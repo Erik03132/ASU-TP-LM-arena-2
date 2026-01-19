@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АСУ ТП в логистике | Автоматизация складов и логистической инфраструктуры</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
+        }
+        
+        .gradient-bg-logistics {
+            background: linear-gradient(135deg, #0f172a 0%, #164e63 50%, #0e7490 100%);
+        }
+        
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2306b6d4' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .glow-cyan {
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(6, 182, 212, 0.1);
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .animate-pulse-glow-cyan {
+            animation: pulseGlowCyan 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), 0 0 60px rgba(56, 189, 248, 0.3); }
+        }
+        
+        @keyframes pulseGlowCyan {
+            0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(6, 182, 212, 0.6), 0 0 60px rgba(6, 182, 212, 0.3); }
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .particle-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+            animation: floatParticle1 15s ease-in-out infinite;
+        }
+        
+        .particle-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+            animation: floatParticle2 12s ease-in-out infinite;
+        }
+        
+        .particle-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.12) 0%, transparent 70%);
+            animation: floatParticle3 18s ease-in-out infinite;
+        }
+        
+        @keyframes floatParticle1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -50px) scale(1.1); }
+            50% { transform: translate(50px, 50px) scale(0.9); }
+            75% { transform: translate(-50px, 25px) scale(1.05); }
+        }
+        
+        @keyframes floatParticle2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-70px, 70px) rotate(120deg); }
+            66% { transform: translate(70px, -30px) rotate(240deg); }
+        }
+        
+        @keyframes floatParticle3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-100px, -80px) scale(1.2); }
+        }
+        
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 1rem;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #06b6d4, #0ea5e9, #22d3ee, #06b6d4);
+            background-size: 300% 300%;
+            border-radius: 1rem;
+            z-index: -1;
+            animation: gradientMove 4s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .animated-gradient-text {
+            background: linear-gradient(90deg, #06b6d4, #0ea5e9, #22d3ee, #06b6d4);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 5s ease infinite;
+        }
+        
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .btn-shine:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+        
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .ripple:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .data-flow {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-flow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+            animation: dataFlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes dataFlow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        .loading-bar {
+            animation: loadingBar 2s ease-in-out infinite;
+        }
+        
+        @keyframes loadingBar {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+        
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 30% 60% 40% / 70% 40% 50% 60%; }
+        }
+        
+        .icon-spin:hover i {
+            animation: spin 0.6s ease-in-out;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* FAQ Accordion Styles - Answers hidden by default */
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer {
+            display: none;
+        }
+        
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .faq-icon {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(6, 182, 212, 0.15);
+            border: 2px solid rgba(6, 182, 212, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+            background: rgba(6, 182, 212, 0.3);
+            border-color: rgba(6, 182, 212, 0.6);
+        }
+        
+        .faq-item:hover .faq-icon {
+            background: rgba(6, 182, 212, 0.25);
+            border-color: rgba(6, 182, 212, 0.5);
+        }
+        
+        .faq-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .faq-item.active {
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+            border-color: rgba(6, 182, 212, 0.4);
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeInDown 0.3s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        .status-pulse {
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .conveyor-move {
+            animation: conveyorMove 2s linear infinite;
+        }
+        
+        @keyframes conveyorMove {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-10px); }
+        }
+        
+        .forklift-move {
+            animation: forkliftMove 3s ease-in-out infinite;
+        }
+        
+        @keyframes forkliftMove {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+        
+        .box-stack {
+            animation: boxStack 2s ease-in-out infinite;
+        }
+        
+        @keyframes boxStack {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        .scanner-blink {
+            animation: scannerBlink 1s ease-in-out infinite;
+        }
+        
+        @keyframes scannerBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .robot-arm {
+            animation: robotArm 2s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+        
+        @keyframes robotArm {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+    </style>
+</head>
+<body class="scroll-smooth bg-slate-900 text-white">
+    <!-- Floating Particles -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="particle particle-1" style="top: 10%; left: 5%;"></div>
+        <div class="particle particle-2" style="top: 60%; right: 10%;"></div>
+        <div class="particle particle-3" style="bottom: 20%; left: 40%;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 nav-blur border-b border-slate-800/50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-glow group-hover:scale-110 transition-transform">
+                        <i class="fas fa-microchip text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold">АСУ<span class="text-sky-400">ТП</span></span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#about" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">О нас</a>
+                    <div class="relative dropdown">
+                        <a href="index.html#services" class="text-slate-300 hover:text-sky-400 transition-all duration-300 flex items-center gap-1 hover:scale-105">
+                            Услуги
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-300"></i>
+                        </a>
+                        <div class="dropdown-menu hidden absolute top-full left-0 mt-2 w-72 bg-slate-800/95 backdrop-blur-lg border border-slate-700 rounded-lg shadow-xl py-2">
+                            <a href="index.html#services" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-sky-400 transition-all duration-300">Все услуги</a>
+                            <a href="asu-tp-zhkh.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-emerald-400 transition-all duration-300">
+                                <i class="fas fa-building text-emerald-400 mr-2"></i>АСУ ТП в ЖКХ
+                            </a>
+                            <a href="pischevaya-promyshlennost.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-amber-400 transition-all duration-300">
+                                <i class="fas fa-wine-bottle text-amber-400 mr-2"></i>Пищевая промышленность и розлив
+                            </a>
+                            <a href="mashinostroenie.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-indigo-400 transition-all duration-300">
+                                <i class="fas fa-cogs text-indigo-400 mr-2"></i>Машиностроение и металлообработка
+                            </a>
+                            <a href="neftegazservis.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-green-400 transition-all duration-300">
+                                <i class="fas fa-oil-can text-green-400 mr-2"></i>Нефтегазсервис и малая химия
+                            </a>
+                            <a href="logistika.html" class="block px-4 py-2 text-cyan-400 bg-slate-700/50">
+                                <i class="fas fa-warehouse text-cyan-400 mr-2"></i>Логистика и склады
+                            </a>
+                        </div>
+                    </div>
+                    <a href="index.html#solutions" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">Решения</a>
+                    <a href="index.html#projects" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">Проекты</a>
+                    <a href="index.html#contact" class="btn-shine bg-sky-500 hover:bg-sky-600 px-5 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/30">Связаться</a>
+                </div>
+                
+                <button id="mobileMenuBtn" class="md:hidden text-white">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-800/95 backdrop-blur-lg border-t border-slate-700">
+            <div class="px-4 py-4 space-y-3">
+                <a href="index.html#about" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">О нас</a>
+                <a href="index.html#services" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Услуги</a>
+                <a href="asu-tp-zhkh.html" class="block text-emerald-400 py-2 pl-4 border-l-2 border-emerald-400">
+                    <i class="fas fa-building mr-2"></i>АСУ ТП в ЖКХ
+                </a>
+                <a href="pischevaya-promyshlennost.html" class="block text-amber-400 py-2 pl-4 border-l-2 border-amber-400">
+                    <i class="fas fa-wine-bottle mr-2"></i>Пищевая промышленность
+                </a>
+                <a href="mashinostroenie.html" class="block text-indigo-400 py-2 pl-4 border-l-2 border-indigo-400">
+                    <i class="fas fa-cogs mr-2"></i>Машиностроение
+                </a>
+                <a href="neftegazservis.html" class="block text-green-400 py-2 pl-4 border-l-2 border-green-400">
+                    <i class="fas fa-oil-can mr-2"></i>Нефтегазсервис
+                </a>
+                <a href="logistika.html" class="block text-cyan-400 py-2 pl-4 border-l-2 border-cyan-400">
+                    <i class="fas fa-warehouse mr-2"></i>Логистика и склады
+                </a>
+                <a href="index.html#solutions" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Решения</a>
+                <a href="index.html#projects" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Проекты</a>
+                <a href="index.html#contact" class="block bg-sky-500 text-center py-2 rounded-lg font-medium">Связаться</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg-logistics hero-pattern pt-20 pb-12 relative overflow-hidden">
+        <!-- Static background glow -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/8 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-sky-500/6 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Breadcrumbs -->
+            <nav class="mb-8 reveal">
+                <ol class="flex items-center space-x-2 text-sm text-slate-400">
+                    <li><a href="index.html" class="hover:text-sky-400 transition-all duration-300">Главная</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300">Услуги</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li class="text-cyan-400">Логистика и складская инфраструктура</li>
+                </ol>
+            </nav>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-left">
+                    <div class="inline-flex items-center bg-cyan-500/20 border border-cyan-500/30 rounded-full px-4 py-2 mb-6 animate-pulse-glow-cyan">
+                        <i class="fas fa-warehouse text-cyan-400 mr-2"></i>
+                        <span class="text-cyan-400 text-sm font-medium">Логистика и склады</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        АСУ ТП для 
+                        <span class="animated-gradient-text">логистики</span> и складов
+                    </h1>
+                    <p class="text-lg text-slate-400 mb-8 leading-relaxed">
+                        Комплексная автоматизация складских комплексов и логистических центров: WMS-системы, автоматизированные стеллажи, конвейерные линии, роботизированная комплектация и интеграция с ERP/TMS.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="index.html#contact" class="btn-shine bg-cyan-500 hover:bg-cyan-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:shadow-xl hover:shadow-cyan-500/30 hover:scale-105">
+                            <span>Заказать проект</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#advantages" class="ripple border border-slate-600 hover:border-cyan-500 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:bg-cyan-500/10">
+                            Преимущества
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="relative reveal-right">
+                    <!-- Main Dashboard Card - Static, no floating -->
+                    <div class="bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl shadow-black/40 overflow-hidden">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-boxes text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">Склад — WMS панель</h3>
+                                    <p class="text-sm text-slate-400">Мониторинг в реальном времени</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-cubes text-cyan-400 group-hover:scale-125 transition-transform box-stack"></i>
+                                        <span class="text-slate-400 text-sm">Товары на складе</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">48,592 SKU ✓</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-truck-loading text-amber-400 group-hover:scale-125 transition-transform forklift-move"></i>
+                                        <span class="text-slate-400 text-sm">Отгрузки сегодня</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">1,247 заказов ✓</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-barcode text-violet-400 group-hover:scale-125 transition-transform scanner-blink"></i>
+                                        <span class="text-slate-400 text-sm">Сканирований</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">15,832/час ✓</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-robot text-rose-400 group-hover:scale-125 transition-transform robot-arm"></i>
+                                        <span class="text-slate-400 text-sm">Роботы-комплектовщики</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">12 активно ✓</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-700">
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div class="transform hover:scale-110 transition-all duration-300 cursor-pointer">
+                                        <div class="text-2xl font-bold text-cyan-400">99.8%</div>
+                                        <div class="text-xs text-slate-400">Точность</div>
+                                    </div>
+                                    <div class="transform hover:scale-110 transition-all duration-300 cursor-pointer">
+                                        <div class="text-2xl font-bold text-cyan-400">15 мин</div>
+                                        <div class="text-xs text-slate-400">Сборка заказа</div>
+                                    </div>
+                                    <div class="transform hover:scale-110 transition-all duration-300 cursor-pointer">
+                                        <div class="text-2xl font-bold text-cyan-400">24/7</div>
+                                        <div class="text-xs text-slate-400">Работа</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-cyan-500 to-sky-500 loading-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-slate-800 py-12 border-y border-slate-700 relative overflow-hidden">
+        <div class="absolute inset-0 data-flow"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center reveal-scale">
+                    <div class="text-3xl md:text-4xl font-bold text-cyan-400">100+</div>
+                    <div class="text-slate-400 mt-2 text-sm">Складских комплексов</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.1s">
+                    <div class="text-3xl md:text-4xl font-bold text-cyan-400">2M+</div>
+                    <div class="text-slate-400 mt-2 text-sm">м² автоматизировано</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.2s">
+                    <div class="text-3xl md:text-4xl font-bold text-cyan-400">+300%</div>
+                    <div class="text-slate-400 mt-2 text-sm">Рост производительности</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.3s">
+                    <div class="text-3xl md:text-4xl font-bold text-cyan-400">99.9%</div>
+                    <div class="text-slate-400 mt-2 text-sm">Точность учёта</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-cyan-500/5 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-cyan-400 font-semibold uppercase tracking-wider">О направлении</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Автоматизация логистики — <span class="animated-gradient-text">что это?</span></h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-left">
+                    <p class="text-slate-400 leading-relaxed mb-6">
+                        <strong class="text-white">АСУ ТП в логистике</strong> — это комплекс интеллектуальных систем управления, обеспечивающих автоматизацию всех складских операций: от приёмки товара до отгрузки готовых заказов.
+                    </p>
+                    <p class="text-slate-400 leading-relaxed mb-6">
+                        Система включает WMS (Warehouse Management System) для управления складом, WCS (Warehouse Control System) для управления оборудованием, а также интеграцию с роботами, конвейерами, автоматическими стеллажами и системами идентификации.
+                    </p>
+                    <p class="text-slate-400 leading-relaxed">
+                        Внедрение автоматизации позволяет увеличить пропускную способность склада в 3-5 раз, снизить количество ошибок до 0.1%, оптимизировать использование площадей и сократить операционные затраты.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 reveal-right">
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group">
+                        <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-cyan-500/40 transition-all duration-300">
+                            <i class="fas fa-warehouse text-cyan-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-cyan-400 transition-colors">WMS системы</h4>
+                        <p class="text-sm text-slate-400">Управление складом</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.1s">
+                        <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-amber-500/40 transition-all duration-300">
+                            <i class="fas fa-conveyor-belt text-amber-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-amber-400 transition-colors">Конвейеры</h4>
+                        <p class="text-sm text-slate-400">Транспортировка грузов</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.2s">
+                        <div class="w-12 h-12 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-violet-500/40 transition-all duration-300">
+                            <i class="fas fa-robot text-violet-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-violet-400 transition-colors">Роботизация</h4>
+                        <p class="text-sm text-slate-400">AGV, AMR, коботы</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.3s">
+                        <div class="w-12 h-12 bg-rose-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-rose-500/40 transition-all duration-300">
+                            <i class="fas fa-qrcode text-rose-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-rose-400 transition-colors">Идентификация</h4>
+                        <p class="text-sm text-slate-400">RFID, штрихкоды, vision</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section id="advantages" class="py-20 bg-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-50"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-cyan-400 font-semibold uppercase tracking-wider">Преимущества</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Почему стоит внедрить <span class="animated-gradient-text">АСУ ТП?</span></h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-400 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-tachometer-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-cyan-400 transition-colors">Скорость обработки</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Увеличение пропускной способности склада до 300% благодаря автоматизации всех операций.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.1s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-check-double text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-green-400 transition-colors">Точность 99.9%</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Практически полное исключение ошибок комплектации за счёт автоматической проверки.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.2s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-expand-arrows-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-blue-400 transition-colors">Оптимизация площади</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Увеличение ёмкости хранения до 85% за счёт высотных стеллажей и оптимального размещения.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.3s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-violet-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-eye text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-purple-400 transition-colors">Полная прозрачность</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Отслеживание каждой единицы товара в реальном времени, полная история перемещений.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.4s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-users-cog text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-amber-400 transition-colors">Сокращение персонала</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Снижение потребности в персонале до 70% при одновременном росте производительности.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.5s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-rose-400 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-clock text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-rose-400 transition-colors">Работа 24/7</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Автоматизированный склад работает круглосуточно без перерывов и выходных.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-1/2 h-full bg-gradient-to-r from-cyan-500/5 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-cyan-400 font-semibold uppercase tracking-wider">Наши решения</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Типовые решения для <span class="animated-gradient-text">логистики</span></h2>
+            </div>
+            
+            <div class="space-y-8">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-left group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-warehouse text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-cyan-400 transition-colors">Автоматизированный склад (AS/RS)</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Полностью автоматические высотные склады с кранами-штабелёрами, shuttle-системами и роботизированной обработкой паллет. Высота хранения до 40 метров.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-cyan-500/20 hover:text-cyan-400 transition-all cursor-pointer">Краны-штабелёры</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-cyan-500/20 hover:text-cyan-400 transition-all cursor-pointer">Shuttle-системы</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-cyan-500/20 hover:text-cyan-400 transition-all cursor-pointer">Miniload</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-cyan-400 mb-2 group-hover:scale-110 transition-transform">+400%</div>
+                            <div class="text-slate-400">ёмкость хранения</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-right group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-violet-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-robot text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-violet-400 transition-colors">Роботизированная комплектация</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Системы Goods-to-Person с мобильными роботами (AGV/AMR), автоматическими сортировщиками и роботами-манипуляторами для сборки заказов.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-violet-500/20 hover:text-violet-400 transition-all cursor-pointer">AGV/AMR роботы</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-violet-500/20 hover:text-violet-400 transition-all cursor-pointer">Pick-by-Light</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-violet-500/20 hover:text-violet-400 transition-all cursor-pointer">Put-to-Wall</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-violet-400 mb-2 group-hover:scale-110 transition-transform">5x</div>
+                            <div class="text-slate-400">скорость сборки</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-left group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-sort-amount-down text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-amber-400 transition-colors">Сортировочные системы</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Высокоскоростные сортировщики для e-commerce и дистрибуции: cross-belt, tilt-tray, shoe-sorter. Производительность до 20,000 единиц в час.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-amber-500/20 hover:text-amber-400 transition-all cursor-pointer">Cross-belt</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-amber-500/20 hover:text-amber-400 transition-all cursor-pointer">Tilt-tray</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-amber-500/20 hover:text-amber-400 transition-all cursor-pointer">Pouch-sorter</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-amber-400 mb-2 group-hover:scale-110 transition-transform">20,000</div>
+                            <div class="text-slate-400">единиц/час</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-30"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-cyan-400 font-semibold uppercase tracking-wider">FAQ</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Часто задаваемые <span class="animated-gradient-text">вопросы</span></h2>
+                <p class="text-slate-400 mt-4">Ответы на популярные вопросы об автоматизации логистики</p>
+            </div>
+            
+            <div class="space-y-4" id="faqContainer">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Что такое WMS и чем она отличается от ERP?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            WMS (Warehouse Management System) — специализированная система управления складом, которая контролирует все складские операции: приёмку, размещение, хранение, комплектацию, отгрузку. В отличие от ERP, которая управляет бизнес-процессами на уровне предприятия (финансы, закупки, продажи), WMS фокусируется на физических операциях с товаром. WMS знает точное местоположение каждой единицы товара, оптимизирует маршруты комплектовщиков, управляет оборудованием. Обычно WMS интегрируется с ERP для обмена данными о заказах и остатках.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какие типы складов можно автоматизировать?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Автоматизации поддаются все типы складов: дистрибуционные центры, фулфилмент-центры e-commerce, производственные склады, склады готовой продукции, холодильные склады, фармацевтические склады с контролем серий и сроков годности. Уровень автоматизации зависит от специфики: от простой WMS с терминалами сбора данных до полностью роботизированных dark warehouses без персонала. Мы подбираем оптимальное решение исходя из товарооборота, номенклатуры и бюджета.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Что такое AGV и AMR роботы?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            AGV (Automated Guided Vehicle) — автоматические транспортные средства, движущиеся по заданным маршрутам (магнитная лента, индуктивный провод, QR-коды на полу). AMR (Autonomous Mobile Robot) — более продвинутые роботы с навигацией SLAM, способные самостоятельно прокладывать маршруты и объезжать препятствия. AMR более гибкие и не требуют изменения инфраструктуры склада. Мы интегрируем роботов KUKA, MiR, Geek+, Locus Robotics и других производителей в единую систему управления.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как работает система Goods-to-Person?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            В традиционной модели Person-to-Goods комплектовщик ходит по складу и собирает товары. В модели Goods-to-Person товар сам «приезжает» к оператору. Роботы или конвейеры доставляют контейнеры/полки с нужным товаром на станцию комплектации, где оператор забирает нужное количество. Это увеличивает производительность в 4-6 раз, так как оператор не тратит время на перемещение. Примеры систем: AutoStore, Geek+ P-серия, Amazon Kiva (теперь Amazon Robotics).
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 5 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какие технологии идентификации используются?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Основные технологии: штрихкоды (1D и 2D/QR-коды) — простое и дешёвое решение, требует прямой видимости; RFID — позволяет считывать множество меток одновременно без прямой видимости, идеально для инвентаризации; машинное зрение (Computer Vision) — распознавание товаров по внешнему виду, контроль качества, измерение габаритов. Часто используется комбинация технологий: штрихкоды на товарах, RFID на паллетах, vision-системы для контроля.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 6 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как интегрируется WMS с маркетплейсами?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Мы обеспечиваем интеграцию WMS с популярными маркетплейсами (Ozon, Wildberries, Яндекс.Маркет, Amazon) и интернет-магазинами через API. Заказы автоматически поступают в WMS, система формирует задания на комплектацию, после отгрузки передаёт трек-номера обратно на площадку. Поддерживаем работу по схемам FBO (Fulfillment by Operator) и FBS (Fulfillment by Seller), включая печать этикеток в формате маркетплейсов.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 7 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Сколько времени занимает внедрение WMS?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Сроки зависят от масштаба и сложности проекта. Базовая WMS для небольшого склада (до 5000 м²) — 2-3 месяца. WMS с интеграцией ERP и конвейерами — 4-6 месяцев. Комплексная автоматизация с роботами и AS/RS — 9-18 месяцев. Этапы: обследование и проектирование (1-2 мес), разработка/настройка (2-4 мес), интеграция с оборудованием (1-3 мес), тестирование и обучение (1 мес), запуск с поддержкой.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 8 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Можно ли автоматизировать склад поэтапно?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Да, мы рекомендуем поэтапный подход для минимизации рисков и распределения инвестиций. Типичный путь: 1) Внедрение WMS с бумажной комплектацией → 2) Добавление ТСД (терминалов сбора данных) → 3) Конвейерная система → 4) Pick-to-Light/Voice picking → 5) Роботизация отдельных зон → 6) Полная автоматизация. Каждый этап даёт измеримый эффект и готовит инфраструктуру для следующего уровня.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 9 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какой эффект даёт автоматизация склада?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Типичные показатели после внедрения: рост производительности комплектации в 2-5 раз, снижение ошибок с 2-3% до 0.1%, увеличение ёмкости хранения на 40-85%, сокращение операционных затрат на 25-40%, ускорение обработки заказов на 50-70%. Точность инвентаризации достигает 99.9%. ROI проекта обычно составляет 12-24 месяца в зависимости от уровня автоматизации.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 10 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какова стоимость автоматизации склада?</span>
+                        <span class="faq-plus text-cyan-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-cyan-500/10 border border-cyan-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Стоимость зависит от площади, номенклатуры и уровня автоматизации. Внедрение WMS — от 1 млн рублей. Комплексная автоматизация с ТСД и принтерами — от 3 млн рублей. Конвейерная система — от 15 млн рублей. Система с роботами-комплектовщиками — от 50 млн рублей. Полностью автоматический склад AS/RS — от 200 млн рублей. Мы предоставляем детальный расчёт ROI, показывающий срок окупаемости инвестиций для вашего конкретного случая.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg-logistics hero-pattern relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl blob"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl blob" style="animation-delay: -3s"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 reveal">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Готовы <span class="animated-gradient-text">автоматизировать</span> склад?</h2>
+            <p class="text-xl text-slate-300 mb-10">
+                Получите бесплатную консультацию и расчёт ROI для вашего склада
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="index.html#contact" class="btn-shine bg-cyan-500 hover:bg-cyan-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-cyan-500/30 hover:scale-105">
+                    <i class="fas fa-paper-plane"></i>
+                    Оставить заявку
+                </a>
+                <a href="tel:+74959234644" class="ripple border border-white/30 hover:bg-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2 hover:border-white/60">
+                    <i class="fas fa-phone animate-pulse"></i>
+                    +7 (495) 923-46-44
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 py-12 border-t border-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-20"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="reveal">
+                    <a href="index.html" class="flex items-center space-x-2 mb-4 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-glow group-hover:scale-110 transition-transform">
+                            <i class="fas fa-microchip text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">АСУ<span class="text-sky-400">ТП</span></span>
+                    </a>
+                    <p class="text-slate-400 text-sm">
+                        Профессиональная автоматизация технологических процессов с 2009 года
+                    </p>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.1s">
+                    <h4 class="font-semibold mb-4">Отрасли</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="asu-tp-zhkh.html" class="hover:text-emerald-400 transition-all duration-300 hover:translate-x-1 inline-block">АСУ ТП в ЖКХ</a></li>
+                        <li><a href="pischevaya-promyshlennost.html" class="hover:text-amber-400 transition-all duration-300 hover:translate-x-1 inline-block">Пищевая промышленность</a></li>
+                        <li><a href="mashinostroenie.html" class="hover:text-indigo-400 transition-all duration-300 hover:translate-x-1 inline-block">Машиностроение</a></li>
+                        <li><a href="neftegazservis.html" class="hover:text-green-400 transition-all duration-300 hover:translate-x-1 inline-block">Нефтегазсервис</a></li>
+                        <li><a href="logistika.html" class="hover:text-cyan-400 transition-all duration-300 hover:translate-x-1 inline-block">Логистика и склады</a></li>
+                    </ul>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.2s">
+                    <h4 class="font-semibold mb-4">Решения</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">SCADA системы</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">WMS системы</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Роботизация</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Интеграция ERP</a></li>
+                    </ul>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.3s">
+                    <h4 class="font-semibold mb-4">Мы в соцсетях</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-vk"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-red-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 pt-8 text-center text-slate-500 text-sm">
+                <p>© 2024 АСУ ТП Системы. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+        
+        // FAQ Toggle Function
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const answer = faqItem.querySelector('.faq-answer');
+            const plus = element.querySelector('.faq-plus');
+            const allFaqItems = document.querySelectorAll('.faq-item');
+            
+            // Close all other FAQs
+            allFaqItems.forEach(item => {
+                if (item !== faqItem) {
+                    const otherAnswer = item.querySelector('.faq-answer');
+                    const otherPlus = item.querySelector('.faq-plus');
+                    if (otherAnswer) {
+                        otherAnswer.style.display = 'none';
+                    }
+                    if (otherPlus) {
+                        otherPlus.textContent = '+';
+                        otherPlus.style.transform = 'rotate(0deg)';
+                    }
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Toggle current FAQ
+            if (answer.style.display === 'none' || answer.style.display === '') {
+                answer.style.display = 'block';
+                plus.textContent = '×';
+                plus.style.transform = 'rotate(0deg)';
+                faqItem.classList.add('active');
+            } else {
+                answer.style.display = 'none';
+                plus.textContent = '+';
+                plus.style.transform = 'rotate(0deg)';
+                faqItem.classList.remove('active');
+            }
+        }
+        
+        // Scroll reveal animations
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        revealElements.forEach(el => revealObserver.observe(el));
+        
+        // Parallax effect for particles
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    
+                    document.querySelectorAll('.particle').forEach((particle, index) => {
+                        const speed = 0.05 + (index * 0.02);
+                        particle.style.transform = `translateY(${scrolled * speed}px)`;
+                    });
+                    
+                    const nav = document.getElementById('navbar');
+                    if (scrolled > 50) {
+                        nav.classList.add('shadow-lg', 'bg-slate-900/95');
+                        nav.classList.remove('bg-slate-900/80');
+                    } else {
+                        nav.classList.remove('shadow-lg', 'bg-slate-900/95');
+                        nav.classList.add('bg-slate-900/80');
+                    }
+                    
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Trigger initial animations
+        setTimeout(() => {
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.classList.add('active');
+                }
+            });
+        }, 300);
+    </script>
+</body>
+</html>

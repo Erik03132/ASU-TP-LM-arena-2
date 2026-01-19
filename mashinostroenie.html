@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АСУ ТП в машиностроении | Автоматизация металлообработки и производства</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
+        }
+        
+        .gradient-bg-steel {
+            background: linear-gradient(135deg, #0f172a 0%, #1f2937 50%, #374151 100%);
+        }
+        
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236366f1' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .glow-indigo {
+            box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(99, 102, 241, 0.1);
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        .animate-pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .animate-pulse-glow-indigo {
+            animation: pulseGlowIndigo 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), 0 0 60px rgba(56, 189, 248, 0.3); }
+        }
+        
+        @keyframes pulseGlowIndigo {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6), 0 0 60px rgba(99, 102, 241, 0.3); }
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .particle-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            animation: floatParticle1 15s ease-in-out infinite;
+        }
+        
+        .particle-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            animation: floatParticle2 12s ease-in-out infinite;
+        }
+        
+        .particle-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.12) 0%, transparent 70%);
+            animation: floatParticle3 18s ease-in-out infinite;
+        }
+        
+        @keyframes floatParticle1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -50px) scale(1.1); }
+            50% { transform: translate(50px, 50px) scale(0.9); }
+            75% { transform: translate(-50px, 25px) scale(1.05); }
+        }
+        
+        @keyframes floatParticle2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-70px, 70px) rotate(120deg); }
+            66% { transform: translate(70px, -30px) rotate(240deg); }
+        }
+        
+        @keyframes floatParticle3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-100px, -80px) scale(1.2); }
+        }
+        
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 1rem;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+            background-size: 300% 300%;
+            border-radius: 1rem;
+            z-index: -1;
+            animation: gradientMove 4s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .animated-gradient-text {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 5s ease infinite;
+        }
+        
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .btn-shine:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+        
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .ripple:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .data-flow {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-flow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            animation: dataFlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes dataFlow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        .loading-bar {
+            animation: loadingBar 2s ease-in-out infinite;
+        }
+        
+        @keyframes loadingBar {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+        
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 30% 60% 40% / 70% 40% 50% 60%; }
+        }
+        
+        .icon-spin:hover i {
+            animation: spin 0.6s ease-in-out;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer {
+            display: none;
+        }
+        
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .faq-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .faq-item.active {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+        
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeInDown 0.3s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        .status-pulse {
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .gear-rotate {
+            animation: gearRotate 10s linear infinite;
+        }
+        
+        @keyframes gearRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .gear-rotate-reverse {
+            animation: gearRotateReverse 8s linear infinite;
+        }
+        
+        @keyframes gearRotateReverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        .spark {
+            animation: spark 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes spark {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body class="scroll-smooth bg-slate-900 text-white">
+    <!-- Floating Particles -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="particle particle-1" style="top: 10%; left: 5%;"></div>
+        <div class="particle particle-2" style="top: 60%; right: 10%;"></div>
+        <div class="particle particle-3" style="bottom: 20%; left: 40%;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 nav-blur border-b border-slate-800/50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-glow group-hover:scale-110 transition-transform">
+                        <i class="fas fa-microchip text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold">АСУ<span class="text-sky-400">ТП</span></span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#about" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">О нас</a>
+                    <div class="relative dropdown">
+                        <a href="index.html#services" class="text-slate-300 hover:text-sky-400 transition-all duration-300 flex items-center gap-1 hover:scale-105">
+                            Услуги
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-300"></i>
+                        </a>
+                        <div class="dropdown-menu hidden absolute top-full left-0 mt-2 w-72 bg-slate-800/95 backdrop-blur-lg border border-slate-700 rounded-lg shadow-xl py-2">
+                            <a href="index.html#services" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-sky-400 transition-all duration-300">Все услуги</a>
+                            <a href="asu-tp-zhkh.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-emerald-400 transition-all duration-300">
+                                <i class="fas fa-building text-emerald-400 mr-2"></i>АСУ ТП в ЖКХ
+                            </a>
+                            <a href="pischevaya-promyshlennost.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-amber-400 transition-all duration-300">
+                                <i class="fas fa-wine-bottle text-amber-400 mr-2"></i>Пищевая промышленность
+                            </a>
+                            <a href="mashinostroenie.html" class="block px-4 py-2 text-indigo-400 bg-slate-700/50">
+                                <i class="fas fa-cogs text-indigo-400 mr-2"></i>Машиностроение и металлообработка
+                            </a>
+                            <a href="neftegazservis.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-green-400 transition-all duration-300">
+                                <i class="fas fa-oil-can text-green-400 mr-2"></i>Нефтегазсервис и малая химия
+                            </a>
+                            <a href="logistika.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-cyan-400 transition-all duration-300">
+                                <i class="fas fa-warehouse text-cyan-400 mr-2"></i>Логистика и склады
+                            </a>
+                        </div>
+                    </div>
+                    <a href="index.html#solutions" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">Решения</a>
+                    <a href="index.html#projects" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">Проекты</a>
+                    <a href="index.html#contact" class="btn-shine bg-sky-500 hover:bg-sky-600 px-5 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/30">Связаться</a>
+                </div>
+                
+                <button id="mobileMenuBtn" class="md:hidden text-white">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-800/95 backdrop-blur-lg border-t border-slate-700">
+            <div class="px-4 py-4 space-y-3">
+                <a href="index.html#about" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">О нас</a>
+                <a href="index.html#services" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Услуги</a>
+                <a href="asu-tp-zhkh.html" class="block text-emerald-400 py-2 pl-4 border-l-2 border-emerald-400">
+                    <i class="fas fa-building mr-2"></i>АСУ ТП в ЖКХ
+                </a>
+                <a href="pischevaya-promyshlennost.html" class="block text-amber-400 py-2 pl-4 border-l-2 border-amber-400">
+                    <i class="fas fa-wine-bottle mr-2"></i>Пищевая промышленность
+                </a>
+                <a href="mashinostroenie.html" class="block text-indigo-400 py-2 pl-4 border-l-2 border-indigo-400">
+                    <i class="fas fa-cogs mr-2"></i>Машиностроение
+                </a>
+                <a href="neftegazservis.html" class="block text-green-400 py-2 pl-4 border-l-2 border-green-400">
+                    <i class="fas fa-oil-can mr-2"></i>Нефтегазсервис
+                </a>
+                <a href="logistika.html" class="block text-cyan-400 py-2 pl-4 border-l-2 border-cyan-400">
+                    <i class="fas fa-warehouse mr-2"></i>Логистика и склады
+                </a>
+                <a href="index.html#solutions" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Решения</a>
+                <a href="index.html#projects" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Проекты</a>
+                <a href="index.html#contact" class="block bg-sky-500 text-center py-2 rounded-lg font-medium">Связаться</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg-steel hero-pattern pt-20 pb-12 relative overflow-hidden">
+        <!-- Static background glow -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/8 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-500/6 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Breadcrumbs -->
+            <nav class="mb-8 reveal">
+                <ol class="flex items-center space-x-2 text-sm text-slate-400">
+                    <li><a href="index.html" class="hover:text-sky-400 transition-all duration-300">Главная</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300">Услуги</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li class="text-indigo-400">Машиностроение и металлообработка</li>
+                </ol>
+            </nav>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-left">
+                    <div class="inline-flex items-center bg-indigo-500/20 border border-indigo-500/30 rounded-full px-4 py-2 mb-6 animate-pulse-glow-indigo">
+                        <i class="fas fa-cogs text-indigo-400 mr-2"></i>
+                        <span class="text-indigo-400 text-sm font-medium">Машиностроение и металлообработка</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        АСУ ТП для 
+                        <span class="animated-gradient-text">машиностроения</span> и металлообработки
+                    </h1>
+                    <p class="text-lg text-slate-400 mb-8 leading-relaxed">
+                        Комплексная автоматизация станков с ЧПУ, обрабатывающих центров, роботизированных комплексов и производственных линий. Интеграция с CAD/CAM, MES и ERP системами.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="index.html#contact" class="btn-shine bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-105">
+                            <span>Заказать проект</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#advantages" class="ripple border border-slate-600 hover:border-indigo-500 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:bg-indigo-500/10">
+                            Преимущества
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="relative reveal-right">
+                    <!-- Main Dashboard Card - Static, no floating -->
+                    <div class="bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl shadow-black/40 overflow-hidden">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-industry text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">Цех металлообработки</h3>
+                                    <p class="text-sm text-slate-400">Мониторинг в реальном времени</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-cog text-indigo-400 group-hover:scale-125 transition-transform gear-rotate"></i>
+                                        <span class="text-slate-400 text-sm">Станок ЧПУ #1</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">Работает ✓</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-robot text-violet-400 group-hover:scale-125 transition-transform"></i>
+                                        <span class="text-slate-400 text-sm">Робот-манипулятор</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">Активен ✓</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-fire text-orange-400 group-hover:scale-125 transition-transform spark"></i>
+                                        <span class="text-slate-400 text-sm">Сварочный комплекс</span>
+                                    </div>
+                                    <span class="text-amber-400 font-mono text-sm">Цикл 85%</span>
+                                </div>
+                                <div class="flex items-center justify-between bg-slate-700/30 rounded-lg p-3 hover:bg-slate-700/50 transition-all duration-300 cursor-pointer group">
+                                    <div class="flex items-center gap-3">
+                                        <i class="fas fa-ruler-combined text-cyan-400 group-hover:scale-125 transition-transform"></i>
+                                        <span class="text-slate-400 text-sm">Контроль качества</span>
+                                    </div>
+                                    <span class="text-green-400 font-mono text-sm status-pulse">0.01 мм ✓</span>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-slate-700">
+                                <div class="grid grid-cols-3 gap-4 text-center">
+                                    <div class="transform hover:scale-110 transition-all duration-300 cursor-pointer">
+                                        <div class="text-2xl font-bold text-indigo-400">96.8%</div>
+                                        <div class="text-xs text-slate-400">OEE</div>
+                                    </div>
+                                    <div class="transform hover:scale-110 transition-all duration-300 cursor-pointer">
+                                        <div class="text-2xl font-bold text-indigo-400">0.005</div>
+                                        <div class="text-xs text-slate-400">мм точность</div>
+                                    </div>
+                                    <div class="transform hover:scale-110 transition-all duration-300 cursor-pointer">
+                                        <div class="text-2xl font-bold text-indigo-400">24/7</div>
+                                        <div class="text-xs text-slate-400">Работа</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-indigo-500 to-violet-500 loading-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-slate-800 py-12 border-y border-slate-700 relative overflow-hidden">
+        <div class="absolute inset-0 data-flow"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center reveal-scale">
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-400">300+</div>
+                    <div class="text-slate-400 mt-2 text-sm">Станков с ЧПУ</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.1s">
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-400">50+</div>
+                    <div class="text-slate-400 mt-2 text-sm">Роботизированных линий</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.2s">
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-400">+60%</div>
+                    <div class="text-slate-400 mt-2 text-sm">Рост производительности</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.3s">
+                    <div class="text-3xl md:text-4xl font-bold text-indigo-400">0.001</div>
+                    <div class="text-slate-400 mt-2 text-sm">мм точность</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-indigo-500/5 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-indigo-400 font-semibold uppercase tracking-wider">О направлении</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Автоматизация машиностроения — <span class="animated-gradient-text">что это?</span></h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-left">
+                    <p class="text-slate-400 leading-relaxed mb-6">
+                        <strong class="text-white">АСУ ТП в машиностроении</strong> — это интегрированный комплекс решений для автоматизации всех этапов металлообработки и производства: от управления станками с ЧПУ до контроля качества готовых изделий.
+                    </p>
+                    <p class="text-slate-400 leading-relaxed mb-6">
+                        Система обеспечивает прецизионное управление обрабатывающими центрами, координацию работы роботов-манипуляторов, мониторинг износа инструмента и интеграцию с системами автоматизированного проектирования (CAD/CAM).
+                    </p>
+                    <p class="text-slate-400 leading-relaxed">
+                        Внедрение АСУ ТП позволяет достичь микронной точности обработки, минимизировать брак, оптимизировать загрузку оборудования и обеспечить полную прослеживаемость производственного процесса.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 reveal-right">
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group">
+                        <div class="w-12 h-12 bg-indigo-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-indigo-500/40 transition-all duration-300">
+                            <i class="fas fa-cog text-indigo-400 text-xl gear-rotate"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-indigo-400 transition-colors">Станки с ЧПУ</h4>
+                        <p class="text-sm text-slate-400">Токарные, фрезерные, шлифовальные</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.1s">
+                        <div class="w-12 h-12 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-violet-500/40 transition-all duration-300">
+                            <i class="fas fa-robot text-violet-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-violet-400 transition-colors">Роботизация</h4>
+                        <p class="text-sm text-slate-400">Манипуляторы, сварка, сборка</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.2s">
+                        <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-orange-500/40 transition-all duration-300">
+                            <i class="fas fa-fire text-orange-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-orange-400 transition-colors">Термообработка</h4>
+                        <p class="text-sm text-slate-400">Закалка, отпуск, цементация</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.3s">
+                        <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-cyan-500/40 transition-all duration-300">
+                            <i class="fas fa-microscope text-cyan-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-cyan-400 transition-colors">Контроль качества</h4>
+                        <p class="text-sm text-slate-400">КИМ, дефектоскопия, метрология</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section id="advantages" class="py-20 bg-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-50"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-indigo-400 font-semibold uppercase tracking-wider">Преимущества</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Почему стоит внедрить <span class="animated-gradient-text">АСУ ТП?</span></h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-400 to-violet-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-bullseye text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-indigo-400 transition-colors">Микронная точность</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Точность позиционирования до 0.001 мм благодаря прецизионным сервоприводам и системам обратной связи.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.1s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-percentage text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-green-400 transition-colors">Снижение брака</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Автоматический контроль размеров и адаптивная коррекция инструмента сокращают брак до 0.1%.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.2s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-cyan-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-clock text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-blue-400 transition-colors">Сокращение цикла</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Оптимизация траекторий и режимов резания сокращает время обработки на 30-50%.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.3s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-violet-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-tools text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-purple-400 transition-colors">Мониторинг инструмента</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Предиктивный контроль износа инструмента предотвращает брак и незапланированные простои.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.4s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-rose-400 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-link text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-rose-400 transition-colors">Интеграция CAD/CAM</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Прямая передача программ из CAM-систем на станки без ручного ввода и перепрограммирования.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.5s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-chart-bar text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-amber-400 transition-colors">Аналитика OEE</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Мониторинг эффективности оборудования в реальном времени для принятия управленческих решений.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions Section -->
+    <section class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-1/2 h-full bg-gradient-to-r from-indigo-500/5 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-indigo-400 font-semibold uppercase tracking-wider">Наши решения</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Типовые решения для <span class="animated-gradient-text">машиностроения</span></h2>
+            </div>
+            
+            <div class="space-y-8">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-left group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-indigo-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-cogs text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-indigo-400 transition-colors">АСУ ТП обрабатывающих центров</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Полная автоматизация многоосевых обрабатывающих центров: управление шпинделем, подачей, СОЖ, сменой инструмента. Адаптивное управление режимами резания.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-indigo-500/20 hover:text-indigo-400 transition-all cursor-pointer">5-осевая обработка</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-indigo-500/20 hover:text-indigo-400 transition-all cursor-pointer">Адаптивный контроль</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-indigo-500/20 hover:text-indigo-400 transition-all cursor-pointer">DNC-связь</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-indigo-400 mb-2 group-hover:scale-110 transition-transform">0.005</div>
+                            <div class="text-slate-400">мм точность</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-right group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-violet-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-robot text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-violet-400 transition-colors">Роботизированные комплексы</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Интеграция промышленных роботов FANUC, KUKA, ABB, Yaskawa для загрузки/выгрузки деталей, сварки, покраски, сборки и паллетирования.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-violet-500/20 hover:text-violet-400 transition-all cursor-pointer">Сварочные роботы</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-violet-500/20 hover:text-violet-400 transition-all cursor-pointer">Коллаборативные</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-violet-500/20 hover:text-violet-400 transition-all cursor-pointer">Машинное зрение</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-violet-400 mb-2 group-hover:scale-110 transition-transform">+200%</div>
+                            <div class="text-slate-400">производительность</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-left group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-cyan-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-microscope text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-cyan-400 transition-colors">Системы контроля качества</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Автоматизация координатно-измерительных машин (КИМ), систем технического зрения, лазерных сканеров. Интеграция с SPC для статистического контроля.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-cyan-500/20 hover:text-cyan-400 transition-all cursor-pointer">КИМ автоматизация</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-cyan-500/20 hover:text-cyan-400 transition-all cursor-pointer">Техническое зрение</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-cyan-500/20 hover:text-cyan-400 transition-all cursor-pointer">SPC/SQC</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-cyan-400 mb-2 group-hover:scale-110 transition-transform">100%</div>
+                            <div class="text-slate-400">контроль деталей</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-30"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-indigo-400 font-semibold uppercase tracking-wider">FAQ</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Часто задаваемые <span class="animated-gradient-text">вопросы</span></h2>
+                <p class="text-slate-400 mt-4">Ответы на популярные вопросы об АСУ ТП в машиностроении</p>
+            </div>
+            
+            <div class="space-y-4" id="faqContainer">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какие станки с ЧПУ можно автоматизировать?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Мы автоматизируем все типы станков с ЧПУ: токарные, фрезерные, шлифовальные, расточные, электроэрозионные, лазерные и плазменные. Поддерживаем оборудование ведущих производителей: DMG MORI, Mazak, Okuma, Haas, FANUC, Siemens, а также отечественные станки. Также модернизируем устаревшие станки, устанавливая современные системы ЧПУ.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как обеспечивается связь станков с системой управления?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Используем современные протоколы связи: MTConnect, OPC UA, FOCAS (для FANUC), EtherNet/IP, PROFINET. Для устаревших станков применяем DNC-серверы и специальные адаптеры. Все данные передаются в реальном времени в единую систему мониторинга, где отображаются на HMI-панелях и в SCADA-системе.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Можно ли интегрировать роботов разных производителей?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Да, мы интегрируем промышленных роботов всех ведущих производителей: FANUC, KUKA, ABB, Yaskawa, Universal Robots, Kawasaki, NACHI. Создаём единую систему управления, которая координирует работу роботов с станками, конвейерами и другим оборудованием. Поддерживаем как традиционных промышленных роботов, так и коллаборативных (коботов).
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как реализуется интеграция с CAD/CAM системами?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Мы обеспечиваем бесшовную интеграцию с популярными CAD/CAM системами: NX Siemens, Mastercam, PowerMill, SolidCAM, SprutCAM, ADEM. Управляющие программы (G-код) автоматически передаются на станки через DNC-сервер. Также реализуем обратную связь: фактические параметры обработки возвращаются в CAM для корректировки технологии.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 5 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Что такое адаптивное управление резанием?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Адаптивное управление (Adaptive Control) — это автоматическая корректировка параметров резания в реальном времени на основе измерения силы резания, вибраций, температуры шпинделя. Система оптимизирует подачу и обороты для максимальной производительности при сохранении качества. Это увеличивает стойкость инструмента на 30-50% и сокращает время обработки.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 6 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как контролируется износ режущего инструмента?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Применяем комплексный мониторинг: анализ потребляемой мощности шпинделя, вибрационный контроль, акустическая эмиссия, измерение температуры. Система предсказывает оптимальный момент замены инструмента, предотвращая брак из-за износа и незапланированные простои. Данные по каждому инструменту сохраняются для анализа и оптимизации закупок.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 7 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как автоматизировать контроль качества деталей?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Внедряем автоматизированные системы контроля: координатно-измерительные машины (КИМ) с автоматической загрузкой, системы технического зрения для 100% контроля, лазерные сканеры для бесконтактных измерений. Результаты измерений автоматически сравниваются с CAD-моделью, отклонения фиксируются в системе SPC для статистического анализа.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 8 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Что показывает система мониторинга OEE?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            OEE (Overall Equipment Effectiveness) — ключевой показатель эффективности оборудования, включающий три компонента: доступность (время работы vs простои), производительность (фактическая vs номинальная скорость), качество (годные детали vs брак). Система автоматически собирает данные со станков, рассчитывает OEE в реальном времени, показывает причины потерь и тренды для каждого станка и цеха.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 9 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Можно ли модернизировать старые станки?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Да, мы специализируемся на ретрофите (модернизации) станков. Устанавливаем современные системы ЧПУ (Siemens, FANUC, Mitsubishi) вместо устаревших, заменяем приводы на сервоприводы, добавляем датчики обратной связи. Это позволяет получить станок с современными возможностями за 30-50% стоимости нового. Механика старых станков часто превосходит современные аналоги по жёсткости.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 10 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какова стоимость автоматизации станочного парка?</span>
+                        <span class="faq-plus text-indigo-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-indigo-500/10 border border-indigo-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Стоимость зависит от количества станков, их типа и требуемого функционала. Подключение станка к системе мониторинга — от 100 тыс. рублей. Ретрофит станка с ЧПУ — от 1,5 млн рублей. Роботизированная ячейка загрузки/выгрузки — от 3 млн рублей. Комплексная автоматизация цеха — от 10 млн рублей. Срок окупаемости обычно составляет 1-2 года за счёт роста производительности и снижения брака.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg-steel hero-pattern relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl blob"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-violet-500/10 rounded-full blur-3xl blob" style="animation-delay: -3s"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 reveal">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Готовы <span class="animated-gradient-text">автоматизировать</span> производство?</h2>
+            <p class="text-xl text-slate-300 mb-10">
+                Получите бесплатную консультацию и расчёт стоимости проекта
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="index.html#contact" class="btn-shine bg-indigo-500 hover:bg-indigo-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-indigo-500/30 hover:scale-105">
+                    <i class="fas fa-paper-plane"></i>
+                    Оставить заявку
+                </a>
+                <a href="tel:+74959234644" class="ripple border border-white/30 hover:bg-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2 hover:border-white/60">
+                    <i class="fas fa-phone animate-pulse"></i>
+                    +7 (495) 923-46-44
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 py-12 border-t border-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-20"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="reveal">
+                    <a href="index.html" class="flex items-center space-x-2 mb-4 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-glow group-hover:scale-110 transition-transform">
+                            <i class="fas fa-microchip text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">АСУ<span class="text-sky-400">ТП</span></span>
+                    </a>
+                    <p class="text-slate-400 text-sm">
+                        Профессиональная автоматизация технологических процессов с 2009 года
+                    </p>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.1s">
+                    <h4 class="font-semibold mb-4">Отрасли</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="asu-tp-zhkh.html" class="hover:text-emerald-400 transition-all duration-300 hover:translate-x-1 inline-block">АСУ ТП в ЖКХ</a></li>
+                        <li><a href="pischevaya-promyshlennost.html" class="hover:text-amber-400 transition-all duration-300 hover:translate-x-1 inline-block">Пищевая промышленность</a></li>
+                        <li><a href="mashinostroenie.html" class="hover:text-indigo-400 transition-all duration-300 hover:translate-x-1 inline-block">Машиностроение</a></li>
+                        <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Все услуги</a></li>
+                    </ul>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.2s">
+                    <h4 class="font-semibold mb-4">Решения</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">SCADA системы</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Диспетчеризация</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">ПАЗ</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Аналитика</a></li>
+                    </ul>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.3s">
+                    <h4 class="font-semibold mb-4">Мы в соцсетях</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-vk"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-red-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 pt-8 text-center text-slate-500 text-sm">
+                <p>© 2024 АСУ ТП Системы. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+        
+        // FAQ Toggle Function
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const answer = faqItem.querySelector('.faq-answer');
+            const plus = element.querySelector('.faq-plus');
+            const allFaqItems = document.querySelectorAll('.faq-item');
+            
+            allFaqItems.forEach(item => {
+                if (item !== faqItem) {
+                    const otherAnswer = item.querySelector('.faq-answer');
+                    const otherPlus = item.querySelector('.faq-plus');
+                    if (otherAnswer) otherAnswer.style.display = 'none';
+                    if (otherPlus) {
+                        otherPlus.textContent = '+';
+                        otherPlus.style.transform = 'rotate(0deg)';
+                    }
+                    item.classList.remove('active');
+                }
+            });
+            
+            if (answer.style.display === 'none' || answer.style.display === '') {
+                answer.style.display = 'block';
+                plus.textContent = '×';
+                faqItem.classList.add('active');
+            } else {
+                answer.style.display = 'none';
+                plus.textContent = '+';
+                faqItem.classList.remove('active');
+            }
+        }
+        
+        // Scroll reveal animations
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        revealElements.forEach(el => revealObserver.observe(el));
+        
+        // Parallax effect for particles
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    
+                    document.querySelectorAll('.particle').forEach((particle, index) => {
+                        const speed = 0.05 + (index * 0.02);
+                        particle.style.transform = `translateY(${scrolled * speed}px)`;
+                    });
+                    
+                    const nav = document.getElementById('navbar');
+                    if (scrolled > 50) {
+                        nav.classList.add('shadow-lg', 'bg-slate-900/95');
+                        nav.classList.remove('bg-slate-900/80');
+                    } else {
+                        nav.classList.remove('shadow-lg', 'bg-slate-900/95');
+                        nav.classList.add('bg-slate-900/80');
+                    }
+                    
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Trigger initial animations
+        setTimeout(() => {
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.classList.add('active');
+                }
+            });
+        }, 300);
+    </script>
+</body>
+</html>

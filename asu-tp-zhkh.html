@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>АСУ ТП в ЖКХ | Автоматизация жилищно-коммунального хозяйства</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
+        }
+        
+        .hero-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2338bdf8' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .glow {
+            box-shadow: 0 0 40px rgba(56, 189, 248, 0.3);
+        }
+        
+        .glow-emerald {
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 30px rgba(16, 185, 129, 0.1);
+        }
+        
+        /* Floating animation */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+        
+        /* Pulse glow animation */
+        .animate-pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        .animate-pulse-glow-emerald {
+            animation: pulseGlowEmerald 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(56, 189, 248, 0.6), 0 0 60px rgba(56, 189, 248, 0.3); }
+        }
+        
+        @keyframes pulseGlowEmerald {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6), 0 0 60px rgba(16, 185, 129, 0.3); }
+        }
+        
+        /* Scroll reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        
+        .particle-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            animation: floatParticle1 15s ease-in-out infinite;
+        }
+        
+        .particle-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+            animation: floatParticle2 12s ease-in-out infinite;
+        }
+        
+        .particle-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+            animation: floatParticle3 18s ease-in-out infinite;
+        }
+        
+        @keyframes floatParticle1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(100px, -50px) scale(1.1); }
+            50% { transform: translate(50px, 50px) scale(0.9); }
+            75% { transform: translate(-50px, 25px) scale(1.05); }
+        }
+        
+        @keyframes floatParticle2 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-70px, 70px) rotate(120deg); }
+            66% { transform: translate(70px, -30px) rotate(240deg); }
+        }
+        
+        @keyframes floatParticle3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-100px, -80px) scale(1.2); }
+        }
+        
+        /* Animated gradient border */
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 1rem;
+        }
+        
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, #10b981, #38bdf8, #8b5cf6, #10b981);
+            background-size: 300% 300%;
+            border-radius: 1rem;
+            z-index: -1;
+            animation: gradientMove 4s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Text gradient animation */
+        .animated-gradient-text {
+            background: linear-gradient(90deg, #10b981, #38bdf8, #8b5cf6, #10b981);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGradient 5s ease infinite;
+        }
+        
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Button shine effect */
+        .btn-shine {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                transparent 100%
+            );
+            transform: rotate(45deg) translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .btn-shine:hover::after {
+            transform: rotate(45deg) translateX(100%);
+        }
+        
+        /* Ripple effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .ripple:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        /* Data flow animation */
+        .data-flow {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .data-flow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            animation: dataFlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes dataFlow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        
+        /* Loading bar animation */
+        .loading-bar {
+            animation: loadingBar 2s ease-in-out infinite;
+        }
+        
+        @keyframes loadingBar {
+            0% { width: 0%; }
+            50% { width: 100%; }
+            100% { width: 0%; }
+        }
+        
+        /* Morphing blob */
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        
+        @keyframes morph {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+            75% { border-radius: 60% 30% 60% 40% / 70% 40% 50% 60%; }
+        }
+        
+        /* Icon spin on hover */
+        .icon-spin:hover i {
+            animation: spin 0.6s ease-in-out;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* FAQ Styles */
+        .faq-item {
+            transition: all 0.3s ease;
+        }
+        
+        .faq-answer {
+            display: none;
+        }
+        
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .faq-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .faq-item.active {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+        
+        /* Dropdown */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeInDown 0.3s ease;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+        
+        .scroll-smooth {
+            scroll-behavior: smooth;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        
+        /* Status indicator pulse */
+        .status-pulse {
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* Number counter effect */
+        .counter-up {
+            animation: counterUp 0.5s ease-out;
+        }
+        
+        @keyframes counterUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="scroll-smooth bg-slate-900 text-white">
+    <!-- Floating Particles -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="particle particle-1" style="top: 10%; left: 5%;"></div>
+        <div class="particle particle-2" style="top: 60%; right: 10%;"></div>
+        <div class="particle particle-3" style="bottom: 20%; left: 40%;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 nav-blur border-b border-slate-800/50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="index.html" class="flex items-center space-x-2 group">
+                    <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-glow group-hover:scale-110 transition-transform">
+                        <i class="fas fa-microchip text-white"></i>
+                    </div>
+                    <span class="text-xl font-bold">АСУ<span class="text-sky-400">ТП</span></span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html#about" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">О нас</a>
+                    <div class="relative dropdown">
+                        <a href="index.html#services" class="text-slate-300 hover:text-sky-400 transition-all duration-300 flex items-center gap-1 hover:scale-105">
+                            Услуги
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-300"></i>
+                        </a>
+                        <div class="dropdown-menu hidden absolute top-full left-0 mt-2 w-72 bg-slate-800/95 backdrop-blur-lg border border-slate-700 rounded-lg shadow-xl py-2">
+                            <a href="index.html#services" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-sky-400 transition-all duration-300">Все услуги</a>
+                            <a href="asu-tp-zhkh.html" class="block px-4 py-2 text-emerald-400 bg-slate-700/50">
+                                <i class="fas fa-building mr-2"></i>АСУ ТП в ЖКХ
+                            </a>
+                            <a href="pischevaya-promyshlennost.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-amber-400 transition-all duration-300">
+                                <i class="fas fa-wine-bottle text-amber-400 mr-2"></i>Пищевая промышленность и розлив
+                            </a>
+                            <a href="mashinostroenie.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-indigo-400 transition-all duration-300">
+                                <i class="fas fa-cogs text-indigo-400 mr-2"></i>Машиностроение и металлообработка
+                            </a>
+                            <a href="neftegazservis.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-green-400 transition-all duration-300">
+                                <i class="fas fa-oil-can text-green-400 mr-2"></i>Нефтегазсервис и малая химия
+                            </a>
+                            <a href="logistika.html" class="block px-4 py-2 text-slate-300 hover:bg-slate-700 hover:text-cyan-400 transition-all duration-300">
+                                <i class="fas fa-warehouse text-cyan-400 mr-2"></i>Логистика и склады
+                            </a>
+                        </div>
+                    </div>
+                    <a href="index.html#solutions" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">Решения</a>
+                    <a href="index.html#projects" class="text-slate-300 hover:text-sky-400 transition-all duration-300 hover:scale-105">Проекты</a>
+                    <a href="index.html#contact" class="btn-shine bg-sky-500 hover:bg-sky-600 px-5 py-2 rounded-lg font-medium transition-all duration-300 hover:shadow-lg hover:shadow-sky-500/30">Связаться</a>
+                </div>
+                
+                <button id="mobileMenuBtn" class="md:hidden text-white">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-slate-800/95 backdrop-blur-lg border-t border-slate-700">
+            <div class="px-4 py-4 space-y-3">
+                <a href="index.html#about" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">О нас</a>
+                <a href="index.html#services" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Услуги</a>
+                <a href="asu-tp-zhkh.html" class="block text-emerald-400 py-2 pl-4 border-l-2 border-emerald-400">
+                    <i class="fas fa-building mr-2"></i>АСУ ТП в ЖКХ
+                </a>
+                <a href="pischevaya-promyshlennost.html" class="block text-amber-400 py-2 pl-4 border-l-2 border-amber-400">
+                    <i class="fas fa-wine-bottle mr-2"></i>Пищевая промышленность
+                </a>
+                <a href="mashinostroenie.html" class="block text-indigo-400 py-2 pl-4 border-l-2 border-indigo-400">
+                    <i class="fas fa-cogs mr-2"></i>Машиностроение
+                </a>
+                <a href="neftegazservis.html" class="block text-green-400 py-2 pl-4 border-l-2 border-green-400">
+                    <i class="fas fa-oil-can mr-2"></i>Нефтегазсервис
+                </a>
+                <a href="logistika.html" class="block text-cyan-400 py-2 pl-4 border-l-2 border-cyan-400">
+                    <i class="fas fa-warehouse mr-2"></i>Логистика и склады
+                </a>
+                <a href="index.html#solutions" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Решения</a>
+                <a href="index.html#projects" class="block text-slate-300 hover:text-sky-400 py-2 transition-all">Проекты</a>
+                <a href="index.html#contact" class="block bg-sky-500 text-center py-2 rounded-lg font-medium">Связаться</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg hero-pattern pt-20 pb-12 relative overflow-hidden">
+        <!-- Static background glow -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/8 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-sky-500/6 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+            <!-- Breadcrumbs -->
+            <nav class="mb-8 reveal">
+                <ol class="flex items-center space-x-2 text-sm text-slate-400">
+                    <li><a href="index.html" class="hover:text-sky-400 transition-all duration-300">Главная</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300">Услуги</a></li>
+                    <li><i class="fas fa-chevron-right text-xs"></i></li>
+                    <li class="text-emerald-400">АСУ ТП в ЖКХ</li>
+                </ol>
+            </nav>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-left">
+                    <div class="inline-flex items-center bg-emerald-500/20 border border-emerald-500/30 rounded-full px-4 py-2 mb-6">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        <span class="text-emerald-400 text-sm font-medium">Жилищно-коммунальное хозяйство</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                        АСУ ТП в 
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500">ЖКХ</span>
+                    </h1>
+                    <p class="text-lg text-slate-400 mb-8 leading-relaxed">
+                        Комплексная автоматизация объектов жилищно-коммунального хозяйства: теплоснабжение, водоснабжение, водоотведение, электроснабжение и управление многоквартирными домами.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="index.html#contact" class="btn-shine bg-emerald-500 hover:bg-emerald-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center gap-2 hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-105">
+                            <span>Заказать проект</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#advantages" class="ripple border border-slate-600 hover:border-emerald-500 px-8 py-4 rounded-xl font-semibold transition-all duration-300 hover:bg-emerald-500/10">
+                            Преимущества
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="relative reveal-right">
+                    <!-- Main Dashboard Card - Static, no floating -->
+                    <div class="bg-slate-800/90 backdrop-blur-xl rounded-2xl border border-slate-700/80 shadow-2xl shadow-black/40 overflow-hidden">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-slate-700/80 to-slate-800/80 px-6 py-4 border-b border-slate-700/50 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                                    <i class="fas fa-city text-white"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white">Диспетчерский центр ЖКХ</div>
+                                    <div class="text-xs text-slate-400">Мониторинг объектов v2.4</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 bg-green-500 rounded-full shadow-lg shadow-green-500/50"></span>
+                                <span class="text-green-400 text-sm font-medium">Online</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats Row -->
+                        <div class="grid grid-cols-3 gap-px bg-slate-700/30">
+                            <div class="bg-slate-800/80 p-4 text-center">
+                                <div class="text-3xl font-bold text-emerald-400">156</div>
+                                <div class="text-xs text-slate-400 mt-1">Объектов</div>
+                            </div>
+                            <div class="bg-slate-800/80 p-4 text-center">
+                                <div class="text-3xl font-bold text-emerald-400">99.2%</div>
+                                <div class="text-xs text-slate-400 mt-1">Uptime</div>
+                            </div>
+                            <div class="bg-slate-800/80 p-4 text-center">
+                                <div class="text-3xl font-bold text-emerald-400">0</div>
+                                <div class="text-xs text-slate-400 mt-1">Аварий</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Systems Status -->
+                        <div class="p-4 space-y-2">
+                            <div class="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-thermometer-half text-red-400"></i>
+                                        </div>
+                                        <span class="text-slate-300 text-sm font-medium">Теплоснабжение</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-green-400 font-mono text-sm">78°C</span>
+                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-tint text-blue-400"></i>
+                                        </div>
+                                        <span class="text-slate-300 text-sm font-medium">Водоснабжение</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-green-400 font-mono text-sm">4.2 bar</span>
+                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-bolt text-amber-400"></i>
+                                        </div>
+                                        <span class="text-slate-300 text-sm font-medium">Электроснабжение</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-green-400 font-mono text-sm">220V</span>
+                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-slate-700/30 rounded-lg p-3 border border-slate-600/30 hover:border-emerald-500/40 transition-all duration-300 group cursor-pointer">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-wind text-cyan-400"></i>
+                                        </div>
+                                        <span class="text-slate-300 text-sm font-medium">Вентиляция</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-green-400 font-mono text-sm">Норма</span>
+                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="bg-slate-700/30 px-5 py-3 border-t border-slate-700/50 flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                    <span class="text-xs text-slate-400">Все системы в норме</span>
+                                </div>
+                            </div>
+                            <div class="text-xs text-slate-500 font-mono">Обновлено: сейчас</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="bg-slate-800 py-12 border-y border-slate-700 relative overflow-hidden">
+        <div class="absolute inset-0 data-flow"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="text-center reveal-scale">
+                    <div class="text-3xl md:text-4xl font-bold text-emerald-400">200+</div>
+                    <div class="text-slate-400 mt-2 text-sm">Объектов ЖКХ</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.1s">
+                    <div class="text-3xl md:text-4xl font-bold text-emerald-400">50+</div>
+                    <div class="text-slate-400 mt-2 text-sm">Городов России</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.2s">
+                    <div class="text-3xl md:text-4xl font-bold text-emerald-400">-40%</div>
+                    <div class="text-slate-400 mt-2 text-sm">Снижение потерь</div>
+                </div>
+                <div class="text-center reveal-scale" style="transition-delay: 0.3s">
+                    <div class="text-3xl md:text-4xl font-bold text-emerald-400">24/7</div>
+                    <div class="text-slate-400 mt-2 text-sm">Мониторинг</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About ZhKH Section -->
+    <section class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-emerald-500/5 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-emerald-400 font-semibold uppercase tracking-wider">О направлении</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Автоматизация ЖКХ — <span class="animated-gradient-text">что это?</span></h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal-left">
+                    <p class="text-slate-400 leading-relaxed mb-6">
+                        <strong class="text-white">АСУ ТП в ЖКХ</strong> — это комплекс программных и аппаратных средств, предназначенных для автоматизированного управления инженерными системами жилищно-коммунального хозяйства.
+                    </p>
+                    <p class="text-slate-400 leading-relaxed mb-6">
+                        Система позволяет в режиме реального времени контролировать и управлять работой котельных, тепловых пунктов, насосных станций, очистных сооружений и других объектов городской инфраструктуры.
+                    </p>
+                    <p class="text-slate-400 leading-relaxed">
+                        Внедрение АСУ ТП обеспечивает существенное повышение эффективности работы коммунальных служб, снижение аварийности и оптимизацию расходов на эксплуатацию.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 reveal-right">
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group">
+                        <div class="w-12 h-12 bg-red-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-red-500/40 transition-all duration-300">
+                            <i class="fas fa-fire text-red-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-red-400 transition-colors">Теплоснабжение</h4>
+                        <p class="text-sm text-slate-400">Котельные, ЦТП, ИТП</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.1s">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-blue-500/40 transition-all duration-300">
+                            <i class="fas fa-tint text-blue-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-blue-400 transition-colors">Водоснабжение</h4>
+                        <p class="text-sm text-slate-400">Насосные станции, водозаборы</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.2s">
+                        <div class="w-12 h-12 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-amber-500/40 transition-all duration-300">
+                            <i class="fas fa-bolt text-amber-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-amber-400 transition-colors">Электроснабжение</h4>
+                        <p class="text-sm text-slate-400">ТП, РП, учёт энергии</p>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 card-hover group" style="transition-delay: 0.3s">
+                        <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 group-hover:bg-green-500/40 transition-all duration-300">
+                            <i class="fas fa-recycle text-green-400 text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold mb-2 group-hover:text-green-400 transition-colors">Водоотведение</h4>
+                        <p class="text-sm text-slate-400">КНС, очистные сооружения</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Advantages Section -->
+    <section id="advantages" class="py-20 bg-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-50"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-emerald-400 font-semibold uppercase tracking-wider">Преимущества</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Почему стоит внедрить <span class="animated-gradient-text">АСУ ТП в ЖКХ?</span></h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group">
+                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-400 to-green-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-coins text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-emerald-400 transition-colors">Экономия ресурсов</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Снижение потерь тепла, воды и электроэнергии до 40% за счёт оптимального управления системами.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.1s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-sky-400 to-blue-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-eye text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-sky-400 transition-colors">Онлайн-мониторинг</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Контроль состояния всех объектов в режиме реального времени из единого диспетчерского центра.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.2s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-bell text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-amber-400 transition-colors">Быстрое реагирование</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Мгновенное оповещение об авариях и нештатных ситуациях, сокращение времени реакции.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.3s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-violet-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-chart-pie text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-purple-400 transition-colors">Аналитика и отчёты</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Автоматическое формирование отчётов, анализ потребления и прогнозирование нагрузок.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.4s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-rose-400 to-red-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-rose-400 transition-colors">Безопасность</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Защита оборудования от аварийных режимов, автоматическое отключение при неисправностях.
+                    </p>
+                </div>
+                
+                <div class="bg-slate-900 rounded-2xl p-8 border border-slate-700 card-hover reveal group" style="transition-delay: 0.5s">
+                    <div class="w-14 h-14 bg-gradient-to-br from-cyan-400 to-teal-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                        <i class="fas fa-users text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 group-hover:text-cyan-400 transition-colors">Сокращение персонала</h3>
+                    <p class="text-slate-400 leading-relaxed">
+                        Автоматизация рутинных операций позволяет оптимизировать штат обслуживающего персонала.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solutions for ZhKH -->
+    <section class="py-20 bg-slate-900 relative overflow-hidden">
+        <div class="absolute bottom-0 left-0 w-1/2 h-full bg-gradient-to-r from-emerald-500/5 to-transparent pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-emerald-400 font-semibold uppercase tracking-wider">Наши решения</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Типовые решения для <span class="animated-gradient-text">ЖКХ</span></h2>
+            </div>
+            
+            <div class="space-y-8">
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-left group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-red-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-fire text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-red-400 transition-colors">АСУ ТП котельной</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Полная автоматизация работы котельного оборудования: управление горелками, насосами, регулирование температуры теплоносителя, контроль давления и расхода газа.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer">Погодозависимое регулирование</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer">Каскадное управление</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-red-500/20 hover:text-red-400 transition-all cursor-pointer">Учёт газа и тепла</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-red-400 mb-2 group-hover:scale-110 transition-transform">-35%</div>
+                            <div class="text-slate-400">экономия топлива</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-right group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-blue-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-tint text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-blue-400 transition-colors">АСУ ТП водоснабжения</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Автоматизация насосных станций, поддержание давления в сети, мониторинг расхода и качества воды, обнаружение утечек.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-blue-500/20 hover:text-blue-400 transition-all cursor-pointer">Частотное регулирование</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-blue-500/20 hover:text-blue-400 transition-all cursor-pointer">Детекция утечек</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-blue-500/20 hover:text-blue-400 transition-all cursor-pointer">АСКУЭ</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-blue-400 mb-2 group-hover:scale-110 transition-transform">-45%</div>
+                            <div class="text-slate-400">снижение потерь воды</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-gradient-to-r from-slate-800 to-slate-800/50 rounded-2xl p-8 border border-slate-700 card-hover reveal-left group">
+                    <div class="grid lg:grid-cols-3 gap-8 items-center">
+                        <div class="lg:col-span-2">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-14 h-14 bg-emerald-500 rounded-xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                                    <i class="fas fa-building text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold group-hover:text-emerald-400 transition-colors">Умный дом / Умный МКД</h3>
+                            </div>
+                            <p class="text-slate-400 mb-6">
+                                Автоматизация инженерных систем многоквартирного дома: ИТП, освещение мест общего пользования, лифты, домофоны, видеонаблюдение.
+                            </p>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">Диспетчеризация</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">АСКУЭ</span>
+                                <span class="bg-slate-700 px-3 py-1 rounded-full text-sm hover:bg-emerald-500/20 hover:text-emerald-400 transition-all cursor-pointer">Интеграция с ГИС ЖКХ</span>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-5xl font-bold text-emerald-400 mb-2 group-hover:scale-110 transition-transform">-30%</div>
+                            <div class="text-slate-400">экономия на ОДН</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-30"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <span class="text-emerald-400 font-semibold uppercase tracking-wider">FAQ</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-3">Часто задаваемые <span class="animated-gradient-text">вопросы</span></h2>
+                <p class="text-slate-400 mt-4">Ответы на популярные вопросы об АСУ ТП в ЖКХ</p>
+            </div>
+            
+            <div class="space-y-4" id="faqContainer">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Что такое АСУ ТП в ЖКХ и для чего она нужна?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            АСУ ТП (Автоматизированная система управления технологическими процессами) в ЖКХ — это комплекс программно-аппаратных средств для автоматического управления и контроля инженерных систем жилищно-коммунального хозяйства. Система позволяет централизованно управлять теплоснабжением, водоснабжением, электроснабжением и другими коммуникациями, обеспечивая их бесперебойную и эффективную работу.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Сколько стоит внедрение АСУ ТП на объекте ЖКХ?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Стоимость внедрения зависит от типа объекта, его масштаба и требуемого функционала. Автоматизация небольшой котельной может стоить от 500 тыс. рублей, крупного теплового пункта — от 1,5 млн рублей, а комплексная диспетчеризация района — от 5 млн рублей. Мы предоставляем бесплатную оценку стоимости проекта после выезда специалиста на объект.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какой срок окупаемости системы АСУ ТП?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Средний срок окупаемости АСУ ТП в ЖКХ составляет от 1 до 3 лет в зависимости от типа объекта. Экономический эффект достигается за счёт снижения потерь ресурсов (до 40%), сокращения аварийности, оптимизации расхода топлива и электроэнергии, а также уменьшения затрат на обслуживающий персонал.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какое оборудование используется в АСУ ТП для ЖКХ?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Мы используем надёжное оборудование ведущих производителей: контроллеры Siemens, ABB, Schneider Electric, ОВЕН; датчики Danfoss, Yokogawa, Endress+Hauser; частотные преобразователи ABB, Danfoss, Vacon. Также применяем отечественное оборудование, соответствующее требованиям импортозамещения.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 5 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Можно ли интегрировать АСУ ТП с существующими системами?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Да, наши решения легко интегрируются с существующими системами: АСКУЭ (автоматизированный учёт энергоресурсов), ГИС ЖКХ, биллинговыми системами, системами «умный дом», видеонаблюдением и СКУД. Мы поддерживаем все стандартные протоколы обмена данными: Modbus, BACnet, OPC UA, MQTT и другие.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 6 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Как осуществляется техническая поддержка после внедрения?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Мы предоставляем гарантийное обслуживание от 12 до 24 месяцев. После гарантийного периода доступны сервисные контракты с круглосуточной технической поддержкой (24/7), удалённым мониторингом системы, регулярным техобслуживанием и оперативным выездом специалистов при необходимости. Среднее время реакции на критические инциденты — до 2 часов.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 7 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Сколько времени занимает внедрение АСУ ТП?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Сроки зависят от масштаба проекта. Автоматизация отдельного теплового пункта занимает 2-4 недели, котельной — 1-2 месяца, комплексная диспетчеризация микрорайона — 3-6 месяцев. Мы составляем детальный график работ и соблюдаем сроки, указанные в договоре.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 8 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Требуется ли специальное обучение персонала?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Да, обучение персонала является обязательной частью проекта и входит в стоимость внедрения. Мы проводим теоретические и практические занятия для операторов и диспетчеров, обучаем работе с интерфейсом SCADA-системы, реагированию на аварийные ситуации. Также предоставляем подробную эксплуатационную документацию на русском языке.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 9 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Какие данные собирает и хранит система АСУ ТП?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Система собирает все технологические параметры: температуру, давление, расход, уровни, состояние оборудования, показания счётчиков. Данные архивируются с заданной периодичностью (обычно от 1 секунды до 1 часа) и хранятся от 3 до 10 лет. Система формирует автоматические отчёты для контролирующих органов и позволяет анализировать исторические данные.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 10 -->
+                <div class="faq-item bg-slate-900 rounded-xl border border-slate-700 overflow-hidden reveal">
+                    <div class="faq-question px-6 py-5 flex items-center justify-between cursor-pointer hover:bg-slate-800/50 transition-all duration-300" onclick="toggleFaq(this)">
+                        <span class="font-semibold text-white pr-4">Соответствует ли система требованиям законодательства?</span>
+                        <span class="faq-plus text-emerald-400 text-2xl font-light w-8 h-8 flex items-center justify-center rounded-full bg-emerald-500/10 border border-emerald-500/30 transition-all duration-300">+</span>
+                    </div>
+                    <div class="faq-answer" style="display: none;">
+                        <div class="px-6 pb-5 text-slate-400 leading-relaxed">
+                            Да, все наши решения соответствуют требованиям российского законодательства: Федеральному закону №261-ФЗ «Об энергосбережении», постановлениям Правительства РФ, СНиП и ГОСТ. Система обеспечивает интеграцию с ГИС ЖКХ, формирование отчётности для ресурсоснабжающих организаций и государственных органов. Оборудование имеет все необходимые сертификаты соответствия.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg hero-pattern relative overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl blob"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl blob" style="animation-delay: -3s"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 reveal">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">Готовы <span class="animated-gradient-text">автоматизировать</span> объекты ЖКХ?</h2>
+            <p class="text-xl text-slate-300 mb-10">
+                Получите бесплатную консультацию и расчёт стоимости проекта
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="index.html#contact" class="btn-shine bg-emerald-500 hover:bg-emerald-600 px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2 hover:shadow-xl hover:shadow-emerald-500/30 hover:scale-105">
+                    <i class="fas fa-paper-plane"></i>
+                    Оставить заявку
+                </a>
+                <a href="tel:+74959234644" class="ripple border border-white/30 hover:bg-white/10 px-8 py-4 rounded-xl font-semibold transition-all duration-300 inline-flex items-center justify-center gap-2 hover:border-white/60">
+                    <i class="fas fa-phone animate-pulse"></i>
+                    +7 (495) 923-46-44
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-950 py-12 border-t border-slate-800 relative overflow-hidden">
+        <div class="absolute inset-0 hero-pattern opacity-20"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="reveal">
+                    <a href="index.html" class="flex items-center space-x-2 mb-4 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-lg flex items-center justify-center animate-pulse-glow group-hover:scale-110 transition-transform">
+                            <i class="fas fa-microchip text-white"></i>
+                        </div>
+                        <span class="text-xl font-bold">АСУ<span class="text-sky-400">ТП</span></span>
+                    </a>
+                    <p class="text-slate-400 text-sm">
+                        Профессиональная автоматизация технологических процессов с 2009 года
+                    </p>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.1s">
+                    <h4 class="font-semibold mb-4">Услуги</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Проектирование</a></li>
+                        <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Программирование</a></li>
+                        <li><a href="asu-tp-zhkh.html" class="hover:text-emerald-400 transition-all duration-300 hover:translate-x-1 inline-block">АСУ ТП в ЖКХ</a></li>
+                        <li><a href="index.html#services" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Поддержка</a></li>
+                    </ul>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.2s">
+                    <h4 class="font-semibold mb-4">Решения</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">SCADA системы</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Диспетчеризация</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">ПАЗ</a></li>
+                        <li><a href="index.html#solutions" class="hover:text-sky-400 transition-all duration-300 hover:translate-x-1 inline-block">Аналитика</a></li>
+                    </ul>
+                </div>
+                
+                <div class="reveal" style="transition-delay: 0.3s">
+                    <h4 class="font-semibold mb-4">Мы в соцсетях</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-sky-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-vk"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-red-500 transition-all duration-300 hover:scale-110 hover:rotate-6">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-slate-800 pt-8 text-center text-slate-500 text-sm">
+                <p>© 2024 АСУ ТП Системы. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const icon = mobileMenuBtn.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+        
+        // FAQ Toggle Function
+        function toggleFaq(element) {
+            const faqItem = element.parentElement;
+            const answer = faqItem.querySelector('.faq-answer');
+            const plus = element.querySelector('.faq-plus');
+            const allFaqItems = document.querySelectorAll('.faq-item');
+            
+            // Close all other FAQs
+            allFaqItems.forEach(item => {
+                if (item !== faqItem) {
+                    const otherAnswer = item.querySelector('.faq-answer');
+                    const otherPlus = item.querySelector('.faq-plus');
+                    if (otherAnswer) {
+                        otherAnswer.style.display = 'none';
+                    }
+                    if (otherPlus) {
+                        otherPlus.textContent = '+';
+                        otherPlus.style.transform = 'rotate(0deg)';
+                    }
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Toggle current FAQ
+            if (answer.style.display === 'none' || answer.style.display === '') {
+                answer.style.display = 'block';
+                plus.textContent = '×';
+                plus.style.transform = 'rotate(0deg)';
+                faqItem.classList.add('active');
+            } else {
+                answer.style.display = 'none';
+                plus.textContent = '+';
+                plus.style.transform = 'rotate(0deg)';
+                faqItem.classList.remove('active');
+            }
+        }
+        
+        // Scroll reveal animations
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+        
+        revealElements.forEach(el => revealObserver.observe(el));
+        
+        // Parallax effect for particles
+        let ticking = false;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    
+                    // Parallax for particles
+                    document.querySelectorAll('.particle').forEach((particle, index) => {
+                        const speed = 0.05 + (index * 0.02);
+                        particle.style.transform = `translateY(${scrolled * speed}px)`;
+                    });
+                    
+                    // Navbar background on scroll
+                    const nav = document.getElementById('navbar');
+                    if (scrolled > 50) {
+                        nav.classList.add('shadow-lg', 'bg-slate-900/95');
+                        nav.classList.remove('bg-slate-900/80');
+                    } else {
+                        nav.classList.remove('shadow-lg', 'bg-slate-900/95');
+                        nav.classList.add('bg-slate-900/80');
+                    }
+                    
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Trigger initial animations
+        setTimeout(() => {
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight) {
+                    el.classList.add('active');
+                }
+            });
+        }, 300);
+    </script>
+</body>
+</html>
