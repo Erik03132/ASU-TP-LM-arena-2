@@ -14,15 +14,21 @@ app.use((req, res, next) => {
 app.post('/api/chat', async (req, res) => {
   try {
     const { message } = req.body;
+    console.log('Incoming message:', message);
 
     if (!message) {
       return res.status(400).json({ error: 'No message provided' });
     }
 
+    if (!process.env.PERPLEXITY_API_KEY) {
+      console.error('PERPLEXITY_API_KEY is missing');
+      return res.status(500).json({ error: 'API key configuration error' });
+    }
+
     const apiRes = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY.trim()}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -40,17 +46,21 @@ app.post('/api/chat', async (req, res) => {
       }),
     });
 
+    const responseData = await apiRes.text();
+    console.log('Perplexity API response status:', apiRes.status);
+    
     if (!apiRes.ok) {
-      return res.status(apiRes.status).json({ error: 'Upstream error' });
+      console.error('Perplexity API error details:', responseData);
+      return res.status(apiRes.status).json({ error: `Upstream error: ${apiRes.status}`, details: responseData });
     }
 
-    const data = await apiRes.json();
+    const data = JSON.parse(responseData);
     const reply = data.choices?.[0]?.message?.content || 'Нет ответа от модели.';
 
     res.status(200).json({ reply });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Detailed server error:', e);
+    res.status(500).json({ error: 'Server error', message: e.message });
   }
 });
 
