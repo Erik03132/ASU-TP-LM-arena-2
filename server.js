@@ -28,11 +28,11 @@ app.post('/api/chat', async (req, res) => {
     const apiRes = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY.trim()}`,
+        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY.trim().replace(/^["']|["']$/g, '')}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'sonar',
         messages: [
           {
             role: 'system',
