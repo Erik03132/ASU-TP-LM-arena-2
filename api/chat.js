@@ -36,7 +36,7 @@ export default async function handler(req, res) {
     }
 
     const data = await apiRes.json();
-    const reply = data.choices?.?.message?.content || 'Нет ответа от модели.';
+    const reply = data.choices?.[0]?.message?.content || 'Нет ответа от модели.';
 
     res.status(200).json({ reply });
   } catch (e) {
@@ -44,4 +44,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: 'Server error' });
   }
 }
-
