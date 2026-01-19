@@ -1215,5 +1215,176 @@
             });
         }, 300);
     </script>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-window" class="fixed bottom-24 right-8 w-96 bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl z-50 flex flex-col hidden overflow-hidden scale-90 opacity-0 transition-all duration-300 origin-bottom-right">
+        <!-- Header -->
+        <div class="p-4 border-b border-slate-700/50 bg-gradient-to-r from-sky-500/10 to-blue-500/10 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-sky-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <div>
+                    <div class="text-sm font-bold">AI Ассистент</div>
+                    <div class="text-[10px] text-sky-400 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                        В сети
+                    </div>
+                </div>
+            </div>
+            <button id="close-chatbot" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Messages Container -->
+        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 max-h-[400px] min-h-[300px] scrollbar-thin scrollbar-thumb-slate-700">
+            <div class="flex gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700">
+                    <i class="fas fa-robot text-sky-400 text-xs"></i>
+                </div>
+                <div class="bg-slate-800/80 rounded-2xl rounded-tl-none p-3 text-sm text-slate-300 border border-slate-700">
+                    Здравствуйте! Я AI-ассистент компании АСУ ТП Системы. Чем я могу вам помочь сегодня?
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 border-t border-slate-700/50 bg-slate-900/50">
+            <form id="chat-form" class="relative">
+                <input type="text" id="chat-input" placeholder="Введите ваш вопрос..." 
+                    class="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 pl-4 pr-12 text-sm focus:outline-none focus:border-sky-500 transition-colors">
+                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-sky-500 hover:bg-sky-600 rounded-lg flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100" id="send-btn">
+                    <i class="fas fa-paper-plane text-white text-xs"></i>
+                </button>
+            </form>
+            <div class="mt-2 text-[10px] text-center text-slate-500 italic">
+                Отвечает на базе искусственного интеллекта
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Toggle -->
+    <button id="chatbot-toggle" class="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-br from-sky-400 to-blue-600 rounded-full shadow-lg shadow-sky-500/20 flex items-center justify-center z-50 hover:scale-110 active:scale-95 transition-all group">
+        <i class="fas fa-comment-dots text-white text-2xl group-hover:rotate-12 transition-transform"></i>
+        <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 border-2 border-slate-900 rounded-full"></div>
+    </button>
+
+    <script>
+        // === Chatbot functionality ===
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggle = document.getElementById('chatbot-toggle');
+            const window = document.getElementById('chatbot-window');
+            const closeBtn = document.getElementById('close-chatbot');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const messagesContainer = document.getElementById('chat-messages');
+            const sendBtn = document.getElementById('send-btn');
+
+            let isOpen = false;
+
+            const toggleChat = () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    window.classList.remove('hidden');
+                    setTimeout(() => {
+                        window.classList.remove('scale-90', 'opacity-0');
+                        window.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                } else {
+                    window.classList.remove('scale-100', 'opacity-100');
+                    window.classList.add('scale-90', 'opacity-0');
+                    setTimeout(() => {
+                        window.classList.add('hidden');
+                    }, 300);
+                }
+            };
+
+            if (toggle) toggle.addEventListener('click', toggleChat);
+            if (closeBtn) closeBtn.addEventListener('click', toggleChat);
+
+            const addMessage = (text, isUser = false) => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = isUser ? 'flex gap-3 justify-end' : 'flex gap-3';
+                
+                const innerHtml = isUser 
+                    ? `
+                        <div class="bg-sky-500 rounded-2xl rounded-tr-none p-3 text-sm text-white border border-sky-400">
+                            ${text}
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center flex-shrink-0 border border-sky-500/30">
+                            <i class="fas fa-user text-sky-400 text-xs"></i>
+                        </div>
+                    `
+                    : `
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700">
+                            <i class="fas fa-robot text-sky-400 text-xs"></i>
+                        </div>
+                        <div class="bg-slate-800/80 rounded-2xl rounded-tl-none p-3 text-sm text-slate-300 border border-slate-700">
+                            ${text}
+                        </div>
+                    `;
+                
+                msgDiv.innerHTML = innerHtml;
+                messagesContainer.appendChild(msgDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            };
+
+            if (chatForm) {
+                chatForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const message = chatInput.value.trim();
+                    if (!message) return;
+
+                    addMessage(message, true);
+                    chatInput.value = '';
+                    chatInput.disabled = true;
+                    sendBtn.disabled = true;
+
+                    const loadingMsg = document.createElement('div');
+                    loadingMsg.className = 'flex gap-3';
+                    loadingMsg.innerHTML = `
+                        <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-700">
+                            <i class="fas fa-robot text-sky-400 text-xs"></i>
+                        </div>
+                        <div class="bg-slate-800/80 rounded-2xl rounded-tl-none p-3 text-sm text-slate-300 border border-slate-700">
+                            <div class="flex gap-1">
+                                <span class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"></span>
+                                <span class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                                <span class="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                            </div>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(loadingMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+                    try {
+                        const response = await fetch('/api/chat', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ message })
+                        });
+
+                        const data = await response.json();
+                        loadingMsg.remove();
+
+                        if (data.reply) {
+                            addMessage(data.reply);
+                        } else {
+                            addMessage('❌ Ошибка: ' + (data.error || 'Неизвестная ошибка'));
+                        }
+                    } catch (err) {
+                        loadingMsg.remove();
+                        addMessage('❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.');
+                        console.error('Chatbot error:', err);
+                    } finally {
+                        chatInput.disabled = false;
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

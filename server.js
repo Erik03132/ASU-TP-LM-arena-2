@@ -58,7 +58,14 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const data = JSON.parse(responseData);
-    const reply = data.choices?.[0]?.message?.content || 'Нет ответа от модели.';
+    let reply = data.choices?.[0]?.message?.content || 'Нет ответа от модели.';
+
+    // Remove markdown bold (**)
+    reply = reply.replace(/\*\*/g, '');
+    // Remove citations [1], [2], etc.
+    reply = reply.replace(/\[\d+\]/g, '');
+    // Remove other potential markdown artifacts
+    reply = reply.trim();
 
     res.status(200).json({ reply });
   } catch (e) {
