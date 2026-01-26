@@ -247,17 +247,18 @@ if (!pageIndexData.choices || !pageIndexData.choices[0]) {        console.error(
       }
 
 const aiMessage = pageIndexData.choices[0].message.content;
+            // Удаляем символы форматирования markdown
+      const cleanedMessage = aiMessage.replace(/\*\*/g, '').replace(/\*/g, '').replace(/_/g, '').replace(/---/g, '').trim();
       history.push({
         role: 'assistant',
-        content: aiMessage
-      });
+      content: cleanedMessage      });
 
       if (history.length > 20) {
         history.splice(0, history.length - 20);
       }
 
       res.json({
-        response: aiMessage,
+        response: cleanedMessage,
         citations: pageIndexData.citations || [],
         documents: pageIndexData.documents || []
       });
