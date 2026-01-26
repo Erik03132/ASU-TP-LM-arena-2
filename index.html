@@ -1898,7 +1898,6 @@
       // Проверяем качество ответа PageIndex
       const hasGoodPageIndexResponse = pageIndexData && 
         pageIndexData.reply && 
-        pageIndexData.reply.length > 50 && 
         !pageIndexData.reply.includes('не нашел') &&
         !pageIndexData.reply.includes('не могу найти');
       
