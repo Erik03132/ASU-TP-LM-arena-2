@@ -175,15 +175,55 @@ app.post('/api/chat-pageindex', async (req, res) => {
     });
 
     try {
-      const pageIndexResponse = await fetch('https://api.pageindex.ai/chat', {
+      const pageIndexResponse = await fetch('https://api.pageindex.ai/chat/completions', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${key}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          query: message,
-          max_tokens: 1000,
+messages: [
+              {
+                role: 'system',
+                content: `ЦЕЛЬ ОТВЕТА:
+Отвечай кратко, профессионально и по делу, минимизируя «процесс». При необходимости задавай 1–2 уточняющих вопроса, но только если без них ответ будет неточным.
+
+ОБЩИЕ ПРАВИЛА СТИЛЯ:
+1. Максимальная длина ответа: 2–4 предложения (по умолчанию).
+2. Избегай описания своих действий («давайте посмотрю», «сначала я найду…» и т.п.).
+3. Не повторяй вопрос пользователя в развёрнутом виде, сразу давай содержание ответа.
+4. Если пользователь явно просит «подробно» или «развернуто», можешь расширить ответ до 6–8 предложений.
+
+ЛОГИКА ИСПОЛЬЗОВАНИЯ ИСТОЧНИКОВ (Page Index и др.):
+1. Если ответ можно дать напрямую — сразу формулируй ответ в 1–3 предложениях.
+2. Если информация частично есть, но часть — на картинке, честно укажи, что детализация недоступна.
+3. Если контекст документа важен, дай 1–2 предложения про применение, а не пересказ всей главы.
+
+ПРАВИЛА УТОЧНЯЮЩИХ ВОПРОСОВ:
+Задавай уточнения только если:
+- Вопрос слишком общий, а нужен прикладной ответ.
+- Нужно понять формат ответа.
+Формат: одно короткое предложение.
+
+СТРУКТУРА ОТВЕТА ПО УМОЛЧАНИЮ:
+Если вопрос концептуальный:
+1. 1–2 предложения: чёткое определение/ответ.
+2. 1–2 предложения: главный практический вывод.
+
+Если вопрос прикладной:
+1. 1–2 предложения: общий принцип.
+2. 2–3 маркера шагов или рекомендаций.
+
+ЗАПРЕТЫ:
+- Писать длинные «подводки» о том, что ты будешь делать.
+- Пересказывать структуру документа, если пользователь это явно не запрашивал.
+- Оправдываться, что чего-то «не видишь», кроме случаев, когда это меняет смысл.`
+              },
+              {
+                role: 'user',
+                content: message
+              }
+            ],          max_tokens: 1000,
           temperature: 0.2
         })
       });
@@ -199,13 +239,11 @@ app.post('/api/chat-pageindex', async (req, res) => {
 
       const pageIndexData = await pageIndexResponse.json();
 
-      if (!pageIndexData.response) {
-        console.error('Invalid response structure from PageIndex');
+if (!pageIndexData.choices || !pageIndexData.choices[0]) {        console.error('Invalid response structure from PageIndex');
         return res.status(500).json({ error: 'Invalid API response' });
       }
 
-      const aiMessage = pageIndexData.response;
-
+const aiMessage = pageIndexData.choices[0].message.content;
       history.push({
         role: 'assistant',
         content: aiMessage
