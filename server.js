@@ -248,8 +248,29 @@ if (!pageIndexData.choices || !pageIndexData.choices[0]) {        console.error(
 
 const aiMessage = pageIndexData.choices[0].message.content;
             // Удаляем символы форматирования markdown
-      const cleanedMessage = aiMessage.replace(/\*\*/g, '').replace(/\*/g, '').replace(/_/g, '').replace(/---/g, '').trim();
-      history.push({
+    // Удаляем символы форматирования и процесс рассуждений
+    let cleanedMessage = aiMessage
+      .replace(/\*\*/g, '') // Убираем **
+      .replace(/\*/g, '')   // Убираем *
+      .replace(/^_/g, '')   // Убираем _
+      .replace(/—–/g, '')   // Убираем дефисы
+      .trim();
+    
+    // Убираем фразы процесса рассуждений
+    const processPatterns = [
+      /^Давайте\s+[^.!?]+[.!?]/gim,
+      /^Сейчас\s+[^.!?]+[.!?]/gim,
+      /^Мне\s+нужно\s+[^.!?]+[.!?]/gim,
+      /^Сначала\s+[^.!?]+[.!?]/gim,
+      /^Позвольте\s+[^.!?]+[.!?]/gim,
+      /Я\s+(найду|посмотрю|проверю|изучу)[^.!?]+[.!?]/gim
+    ];
+    
+    processPatterns.forEach(pattern => {
+      cleanedMessage = cleanedMessage.replace(pattern, '');
+    });
+    
+    cleanedMessage = cleanedMessage.trim();      history.push({
         role: 'assistant',
       content: cleanedMessage      });
 
