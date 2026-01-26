@@ -36,171 +36,214 @@ app.post('/api/chat', async (req, res) => {
       sessions.set(sessionId, [
         {
           role: 'system',
-          content: `Стиль ответа:
-Отвечай кратко: 1–3 предложения, без “воды” и маркетинга.
-Используй профессиональные, но понятные термины, избегай жаргона и сложных аббревиатур без расшифровки.
-Сначала давай прямой ответ, затем при необходимости 1 уточнение или пример.
+          content: `ЦЕЛЬ ОТВЕТА:
+Отвечай кратко, профессионально и по делу, минимизируя «процесс». При необходимости задавай 1–2 уточняющих вопроса, но только если без них ответ будет неточным.
 
-Работа с вопросом:
-Если вопрос общий (“что такое…?”) — дай чёткое определение и 1–2 ключевых эффекта (надёжность, безопасность, экономия).
-Если вопрос прикладной (“можно ли у нас…?”) — ответь да/нет/зависит и укажи от каких факторов (тип производства, существующая система, требования безопасности).
-При неясном вопросе задай один уточняющий вопрос: “Уточните, пожалуйста: …”.
+ОБЩИЕ ПРАВИЛА СТИЛЯ:
+1. Максимальная длина ответа: 2–4 предложения (по умолчанию).
+2. Избегай описания своих действий («давайте посмотрю», «сначала я найду…» и т.п.).
+3. Не повторяй вопрос пользователя в развёрнутом виде, сразу давай содержание ответа.
+4. Если пользователь явно просит «подробно» или «развернуто», можешь расширить ответ до 6–8 предложений.
 
-Использование информации из интернета:
-Из внешних источников бери только ядро смысла: 1–2 главные идеи без деталей реализации.
-Не копируй текст целиком, формулируй ответ своими словами в деловом стиле.
-Никогда не ссылайся на конкретные сайты и бренды, кроме случаев, когда клиент прямо спрашивает о них.
+ЛОГИКА ИСПОЛЬЗОВАНИЯ ИСТОЧНИКОВ (Page Index и др.):
+1. Если ответ можно дать напрямую — сразу формулируй ответ в 1–3 предложениях.
+2. Если информация частично есть, но часть — на картинке, честно укажи, что детализация недоступна.
+3. Если контекст документа важен, дай 1–2 предложения про применение, а не пересказ всей главы.
 
-Ограничения и эскалация:
-Если нет уверенности в ответе — так и скажи и предложи консультацию инженера: “Этот вопрос требует анализа объекта, рекомендую обсудить с инженером‑проектировщиком.”
-Для сложных запросов (проектирование, выбор ПЛК/SCADA, безопасность) всегда предлагай связаться с живым специалистом или оставить контакты.
+ПРАВИЛА УТОЧНЯЮЩИХ ВОПРОСОВ:
+Задавай уточнения только если:
+- Вопрос слишком общий, а нужен прикладной ответ.
+- Нужно понять формат ответа.
+Формат: одно короткое предложение.
 
-Структура типового ответа:
-1‑я фраза: сущность ответа (что / можно ли / как).
-2‑я фраза: ключевой эффект или условие.
-3‑я фраза (при необходимости): предложение следующего шага (аудит, консультация, коммерческое предложение).`
+СТРУКТУРА ОТВЕТА ПО УМОЛЧАНИЮ:
+Если вопрос концептуальный:
+1. 1–2 предложения: чёткое определение/ответ.
+2. 1–2 предложения: главный практический вывод.
+
+Если вопрос прикладной:
+1. 1–2 предложения: общий принцип.
+2. 2–3 маркера шагов или рекомендаций.
+
+ЗАПРЕТЫ:
+- Писать длинные «подводки» о том, что ты будешь делать.
+- Пересказывать структуру документа, если пользователь это явно не запрашивал.
+- Оправдываться, что чего-то «не видишь», кроме случаев, когда это меняет смысл.`
         }
       ]);
     }
 
     const history = sessions.get(sessionId);
-    history.push({ role: 'user', content: message });
-
-    // Keep history manageable (e.g., last 10 messages + system prompt)
-    if (history.length > 11) {
-      history.splice(1, history.length - 11);
-    }
-
-    const apiRes = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${key}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'sonar',
-        messages: history,
-        max_tokens: 400,
-        temperature: 0.7,
-      }),
+    history.push({
+      role: 'user',
+      content: message
     });
 
-    const responseData = await apiRes.text();
-    
-    if (!apiRes.ok) {
-      console.error('Perplexity API error details:', responseData);
-      return res.status(apiRes.status).json({ error: `Upstream error: ${apiRes.status}`, details: responseData });
+    let perplexityResponse = null;
+    let perplexityData = null;
+
+    try {
+      perplexityResponse = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-large-128k-online',
+          messages: history,
+          temperature: 0.2,
+          max_tokens: 1000
+        })
+      });
+
+      if (!perplexityResponse.ok) {
+        const errorText = await perplexityResponse.text();
+        console.error('Perplexity API error:', perplexityResponse.status, errorText);
+        return res.status(perplexityResponse.status).json({
+          error: 'Perplexity API error',
+          details: errorText
+        });
+      }
+
+      perplexityData = await perplexityResponse.json();
+
+      if (!perplexityData.choices || !perplexityData.choices[0]) {
+        console.error('Invalid response structure from Perplexity');
+        return res.status(500).json({ error: 'Invalid API response' });
+      }
+
+      const aiMessage = perplexityData.choices[0].message.content;
+
+      history.push({
+        role: 'assistant',
+        content: aiMessage
+      });
+
+      // Limit history to last 20 messages
+      if (history.length > 21) {
+        history.splice(1, history.length - 21);
+      }
+
+      res.json({
+        response: aiMessage,
+        citations: perplexityData.citations || []
+      });
+
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError);
+      return res.status(500).json({
+        error: 'Failed to connect to AI service',
+        details: fetchError.message
+      });
     }
 
-    const data = JSON.parse(responseData);
-    let reply = data.choices?.[0]?.message?.content || 'Нет ответа от модели.';
-
-    // Clean reply
-    reply = reply.replace(/\*\*/g, '').replace(/\[\d+\]/g, '').trim();
-
-    // Add reply to history
-    history.push({ role: 'assistant', content: reply });
-
-    res.status(200).json({ reply });
-  } catch (e) {
-    console.error('Detailed server error:', e);
-    res.status(500).json({ error: 'Server error', message: e.message });
+  } catch (error) {
+    console.error('Server error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      details: error.message
+    });
   }
 });
 
-// PageIndex Chat API endpoint
+// PageIndex API endpoint
 app.post('/api/chat-pageindex', async (req, res) => {
   try {
-    const { message, docIds, sessionId = 'default' } = req.body;
-    
+    const { message, sessionId = 'default' } = req.body;
+    console.log(`Incoming PageIndex message for session ${sessionId}:`, message);
+
     if (!message) {
       return res.status(400).json({ error: 'No message provided' });
     }
 
     if (!process.env.PAGEINDEX_API_KEY) {
       console.error('PAGEINDEX_API_KEY is missing');
-      return res.status(500).json({ error: 'PageIndex API key configuration error' });
+      return res.status(500).json({ error: 'API key configuration error' });
     }
 
-    // Parse doc IDs from environment or request
-    let documentIds = docIds;
-    if (!documentIds && process.env.PAGEINDEX_DOC_IDS) {
-      documentIds = process.env.PAGEINDEX_DOC_IDS.split(',').map(id => id.trim());
+    const key = process.env.PAGEINDEX_API_KEY.trim().replace(/^["']|["']$/g, '');
+
+    if (!sessions.has(sessionId)) {
+      sessions.set(sessionId, []);
     }
 
-    if (!documentIds || documentIds.length === 0) {
-      return res.status(400).json({ error: 'No document IDs provided' });
-    }
-
-    const key = process.env.PAGEINDEX_API_KEY.trim();
-
-    // Get or initialize session history for PageIndex
-    if (!sessions.has(sessionId + '-pageindex')) {
-      sessions.set(sessionId + '-pageindex', []);
-    }
-
-    const history = sessions.get(sessionId + '-pageindex');
-    history.push({ role: 'user', content: message });
-
-    // Keep history manageable
-    if (history.length > 10) {
-      history.splice(0, history.length - 10);
-    }
-
-    const pageIndexRes = await fetch('https://api.pageindex.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'api_key': key
-      },
-      body: JSON.stringify({
-        doc_id: documentIds,
-        messages: history
-      })
+    const history = sessions.get(sessionId);
+    history.push({
+      role: 'user',
+      content: message
     });
 
-    const responseData = await pageIndexRes.text();
+    try {
+      const pageIndexResponse = await fetch('https://api.pageindex.ai/chat', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query: message,
+          max_tokens: 1000,
+          temperature: 0.2
+        })
+      });
 
-    if (!pageIndexRes.ok) {
-      console.error('PageIndex API error:', responseData);
-      return res.status(pageIndexRes.status).json({ error: `PageIndex error: ${pageIndexRes.status}`, details: responseData });
+      if (!pageIndexResponse.ok) {
+        const errorText = await pageIndexResponse.text();
+        console.error('PageIndex API error:', pageIndexResponse.status, errorText);
+        return res.status(pageIndexResponse.status).json({
+          error: 'PageIndex API error',
+          details: errorText
+        });
+      }
+
+      const pageIndexData = await pageIndexResponse.json();
+
+      if (!pageIndexData.response) {
+        console.error('Invalid response structure from PageIndex');
+        return res.status(500).json({ error: 'Invalid API response' });
+      }
+
+      const aiMessage = pageIndexData.response;
+
+      history.push({
+        role: 'assistant',
+        content: aiMessage
+      });
+
+      if (history.length > 20) {
+        history.splice(0, history.length - 20);
+      }
+
+      res.json({
+        response: aiMessage,
+        citations: pageIndexData.citations || [],
+        documents: pageIndexData.documents || []
+      });
+
+    } catch (fetchError) {
+      console.error('PageIndex fetch error:', fetchError);
+      return res.status(500).json({
+        error: 'Failed to connect to PageIndex service',
+        details: fetchError.message
+      });
     }
 
-    const data = JSON.parse(responseData);
-    let reply = data.choices?.[0]?.message?.content || 'Нет ответа от PageIndex.';
-
-    // Add reply to history
-    history.push({ role: 'assistant', content: reply });
-
-    res.status(200).json({ reply, source: 'pageindex' });
-  } catch (e) {
-    console.error('PageIndex server error:', e);
-    res.status(500).json({ error: 'Server error', message: e.message });
+  } catch (error) {
+    console.error('PageIndex server error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      details: error.message
+    });
   }
 });
 
-app.get('/zhkh', (req, res) => {
-  res.sendFile(path.join(__dirname, 'asu-tp-zhkh.html'));
+app.use(express.static(path.join(__dirname, '.')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get('/food', (req, res) => {
-  res.sendFile(path.join(__dirname, 'pischevaya-promyshlennost.html'));
-});
-
-app.get('/engineering', (req, res) => {
-  res.sendFile(path.join(__dirname, 'mashinostroenie.html'));
-});
-
-app.get('/oil-gas', (req, res) => {
-  res.sendFile(path.join(__dirname, 'neftegazservis.html'));
-});
-
-app.get('/logistics', (req, res) => {
-  res.sendFile(path.join(__dirname, 'logistika.html'));
-});
-
-app.use(express.static(__dirname));
-
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });
