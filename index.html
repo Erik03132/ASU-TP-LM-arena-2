@@ -1877,29 +1877,61 @@
 
       const typingId = showTyping();
 
+      // Сначала пробуем PageIndex
+      let pageIndexResponse = null;
+      let pageIndexData = null;
+      
       try {
-        const response = await fetch('/api/chat', {
+        pageIndexResponse = await fetch('/api/chat-pageindex', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message }),
         });
-
-        removeTyping(typingId);
-
-        if (!response.ok) {
-          throw new Error('API Error: ' + response.status);
+        
+        if (pageIndexResponse.ok) {
+          pageIndexData = await pageIndexResponse.json();
         }
-
-        const data = await response.json();
-        const botMessage = data.reply || 'Извините, не удалось получить ответ.';
-        addMessage(botMessage, 'bot');
       } catch (error) {
+        console.log('PageIndex недоступен, переключаемся на Perplexity');
+      }
+      
+      // Проверяем качество ответа PageIndex
+      const hasGoodPageIndexResponse = pageIndexData && 
+        pageIndexData.reply && 
+        pageIndexData.reply.length > 50 && 
+        !pageIndexData.reply.includes('не нашел') &&
+        !pageIndexData.reply.includes('не могу найти');
+      
+      if (hasGoodPageIndexResponse) {
+        // Используем ответ PageIndex
         removeTyping(typingId);
-        console.error('Chatbot error:', error);
-        addMessage(
-          '❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.',
-          'bot'
-        );
+        addMessage(pageIndexData.reply + ' [📚 PageIndex]', 'bot');
+      } else {
+        // Fallback на Perplexity
+        try {
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message }),
+          });
+          
+          removeTyping(typingId);
+          
+          if (!response.ok) {
+            throw new Error('API Error: ' + response.status);
+          }
+          
+          const data = await response.json();
+          const botMessage = data.reply || 'Извините, не удалось получить ответ.';
+          addMessage(botMessage + ' [🌐 Perplexity]', 'bot');
+        } catch (error) {
+          removeTyping(typingId);
+          console.error('Chatbot error:', error);
+          addMessage(
+            '❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.',
+            'bot'
+          );
+        }
       }
     }
 
