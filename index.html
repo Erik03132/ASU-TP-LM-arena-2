@@ -1896,10 +1896,7 @@
       }
       
       // Проверяем качество ответа PageIndex
-      const hasGoodPageIndexResponse = pageIndexData && 
-        pageIndexData.reply && 
-        !pageIndexData.reply.includes('не нашел') &&
-        !pageIndexData.reply.includes('не могу найти');
+      const hasGoodPageIndexResponse = pageIndexData && pageIndexData.reply && pageIndexData.reply.trim().length > 0;        pageIndexData.reply && 
       
       if (hasGoodPageIndexResponse) {
         // Используем ответ PageIndex
