@@ -65,8 +65,8 @@ export default async function handler(req, res) {
     history.push({ role: 'user', content: message });
 
     // Keep history manageable (last 10 messages + system prompt)
-    if (history.length > 11) {
-      history.splice(1, history.length - 11);
+    if (history.length > 20) {
+      history.splice(1, history.length - 20);
     }
 
     const apiRes = await fetch('https://api.perplexity.ai/chat/completions', {
