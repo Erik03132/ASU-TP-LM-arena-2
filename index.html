@@ -1768,13 +1768,13 @@
         let isOpen = false;
 
         function enableChat() {
-            chatbotInput.disabled = false;
-            chatbotSend.disabled = false;
+            if (chatbotInput) chatbotInput.disabled = false;
+            if (chatbotSend) chatbotSend.disabled = false;
         }
 
         function disableChat() {
-            chatbotInput.disabled = true;
-            chatbotSend.disabled = true;
+            if (chatbotInput) chatbotInput.disabled = true;
+            if (chatbotSend) chatbotSend.disabled = true;
         }
 
         enableChat();
@@ -1783,10 +1783,10 @@
         chatbotToggle?.addEventListener('click', () => {
             isOpen = !isOpen;
             if (isOpen) {
-                chatbotWindow.classList.remove('hidden');
-                chatbotIcon.classList.remove('fa-comments');
-                chatbotIcon.classList.add('fa-times');
-                chatbotInput.focus();
+                chatbotWindow?.classList.remove('hidden');
+                chatbotIcon?.classList.remove('fa-comments');
+                chatbotIcon?.classList.add('fa-times');
+                chatbotInput?.focus();
             } else {
                 closeChat();
             }
@@ -1796,9 +1796,9 @@
 
         function closeChat() {
             isOpen = false;
-            chatbotWindow.classList.add('hidden');
-            chatbotIcon.classList.remove('fa-times');
-            chatbotIcon.classList.add('fa-comments');
+            chatbotWindow?.classList.add('hidden');
+            chatbotIcon?.classList.remove('fa-times');
+            chatbotIcon?.classList.add('fa-comments');
         }
 
         // Отправка сообщений
@@ -1896,8 +1896,8 @@
                 `;
             }
 
-            chatbotMessages.appendChild(messageDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            chatbotMessages?.appendChild(messageDiv);
+            if (chatbotMessages) chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
         }
 
         function showTyping() {
@@ -1917,8 +1917,8 @@
                   </div>
                 </div>
             `;
-            chatbotMessages.appendChild(typingDiv);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            chatbotMessages?.appendChild(typingDiv);
+            if (chatbotMessages) chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
             return id;
         }
 
@@ -1932,7 +1932,6 @@
             div.textContent = text;
             return div.innerHTML;
         }
-    });
 </script>
 </body>
 </html>
