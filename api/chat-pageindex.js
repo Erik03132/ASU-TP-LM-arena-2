@@ -41,23 +41,26 @@ export default async function handler(req, res) {
 
     // Get or initialize session history for PageIndex
     if (!sessions.has(sessionId + '-pageindex')) {
-      sessions.set(sessionId + '-pageindex', []);
+          sessions.set(sessionId + '-pageindex', [
+      {
+        role: 'system',
+        content: 'Ты - профессиональный AI-ассистент по АСУ ТП (автоматизация технологических процессов). Отвечай КРАТКО (максимум 2-3 предложения), профессионально и по существу. Используй технические термины. Если информации нет в документах, скажи это честно одним предложением.'
+      }
+    ]);
     }
 
     const history = sessions.get(sessionId + '-pageindex');
     history.push({ role: 'user', content: message });
 
     // Keep history manageable
-    if (history.length > 10) {
-      history.splice(0, history.length - 10);
-    }
+  if (history.length > 20) {    }
+        history.splice(0, history.length - 20);
 
     const pageIndexRes = await fetch('https://api.pageindex.ai/chat/completions', {
-      method: 'POST',
-      headers: {
+    method: 'POST',      headers: {
         'Content-Type': 'application/json',
         'api_key': key
-      },
+      
       body: JSON.stringify({
         doc_id: documentIds,
         messages: history
