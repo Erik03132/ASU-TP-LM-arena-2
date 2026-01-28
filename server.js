@@ -182,10 +182,10 @@ app.post('/api/chat-pageindex', async (req, res) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-messages: [
-  {
-    role: 'system',
-    content: `ИНСТРУКЦИЯ ДЛЯ ОТВЕТА:
+          messages: [
+            {
+              role: 'system',
+              content: `ИНСТРУКЦИЯ ДЛЯ ОТВЕТА:
 
 ТЫ РАБОТАЕШЬ КАК ПРОФЕССИОНАЛЬНЫЙ ЭКСПЕРТ С ДОКУМЕНТАМИ.
 КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНО описывать процесс работы или поиска.
@@ -209,13 +209,15 @@ messages: [
 - Сразу отвечать на вопрос с фактами из документа
 - Указывать источник в конце: [📚 PageIndex]
 - Быть точным и профессиональным`
-  },
-  {
-    role: 'user',
-    content: message
-  }
-], max_tokens: 1000,
-temperature: 0.1
+            },
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          max_tokens: 1000,
+          temperature: 0.1,
+          document_ids: process.env.PAGEINDEX_DOCUMENT_IDS ? process.env.PAGEINDEX_DOCUMENT_IDS.split(',').map(id => id.trim()) : undefined
         })
       });
 
