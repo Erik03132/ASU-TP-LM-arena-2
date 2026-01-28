@@ -1874,12 +1874,11 @@
 
             const typingId = showTyping();
 
-            // Сначала пробуем PageIndex
-            let pageIndexResponse = null;
+            console.log('Attempting PageIndex request...');
             let pageIndexData = null;
 
             try {
-                pageIndexResponse = await fetch('/api/chat-pageindex', {
+                const pageIndexResponse = await fetch('/api/chat-pageindex', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message }),
@@ -1887,20 +1886,22 @@
 
                 if (pageIndexResponse.ok) {
                     pageIndexData = await pageIndexResponse.json();
+                    console.log('PageIndex response received:', pageIndexData);
+                } else {
+                    console.warn('PageIndex response not OK:', pageIndexResponse.status);
                 }
             } catch (error) {
-                console.log('PageIndex недоступен, переключаемся на Perplexity');
+                console.error('PageIndex request failed:', error);
             }
 
-            // Проверяем качество ответа PageIndex
-            const hasGoodPageIndexResponse = pageIndexData && pageIndexData.reply && pageIndexData.reply.trim().length > 0;
+            // Check if PageIndex gave a useful answer
+            const hasGoodPageIndexResponse = pageIndexData && pageIndexData.response && pageIndexData.response.trim().length > 0;
 
             if (hasGoodPageIndexResponse) {
-                // Используем ответ PageIndex
                 removeTyping(typingId);
-                addMessage(pageIndexData.reply + ' [📚 PageIndex]', 'bot');
+                addMessage(pageIndexData.response + ' [📚 PageIndex]', 'bot');
             } else {
-                // Fallback на Perplexity
+                console.log('Falling back to Perplexity...');
                 try {
                     const response = await fetch('/api/chat', {
                         method: 'POST',
@@ -1911,17 +1912,18 @@
                     removeTyping(typingId);
 
                     if (!response.ok) {
-                        throw new Error('API Error: ' + response.status);
+                        const errData = await response.json();
+                        throw new Error(errData.error || 'API Error');
                     }
 
                     const data = await response.json();
-                    const botMessage = data.reply || 'Извините, не удалось получить ответ.';
+                    const botMessage = data.response || 'Извините, не удалось получить ответ.';
                     addMessage(botMessage + ' [🌐 Perplexity]', 'bot');
                 } catch (error) {
                     removeTyping(typingId);
-                    console.error('Chatbot error:', error);
+                    console.error('Perplexity error:', error);
                     addMessage(
-                        '❌ Произошла ошибка при обращении к AI. Попробуйте позже или проверьте интернет-соединение.',
+                        '❌ Ошибка: ' + error.message,
                         'bot'
                     );
                 }
