@@ -2803,64 +2803,67 @@
                 const formData = new FormData(contactForm);
                   const formObject = Object.fromEntries(formData.entries());
                 try {
-                    // Переходим на стандартную отправку FormData для лучшей совместимости
-                    const response = await fetch('https://api.web3forms.com/submit', {
-                        method: 'POST',
-                        headers: {
-                            'Accept': 'application/json'
-                        },
-                        body: formData
-                    });
+                    // Используем стандартную отправку формы через XMLHttpRequest для максимальной надежности
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'https://api.web3forms.com/submit', true);
+                    xhr.setRequestHeader('Accept', 'application/json');
+                    
+                    xhr.onload = function() {
+                        const result = JSON.parse(xhr.responseText);
+                        
+                        if (xhr.status >= 200 && xhr.status < 300 && result.success) {
+                            // Успешная отправка
+                            btnText.textContent = 'Отправлено!';
+                            btnIcon.classList.remove('fa-spinner', 'fa-spin');
+                            btnIcon.classList.add('fa-check');
+                            submitBtn.classList.remove('bg-sky-500');
+                            submitBtn.classList.add('bg-green-500');
+                            submitBtn.style.transform = 'scale(1.02)';
 
-                    const result = await response.json();
+                            formSuccess.classList.remove('hidden');
+                            contactForm.reset();
 
-                    if (result.success) {
-                        // Успешная отправка
-                        btnText.textContent = 'Отправлено!';
+                            setTimeout(() => {
+                                btnText.textContent = 'Отправить заявку';
+                                btnIcon.classList.remove('fa-check');
+                                btnIcon.classList.add('fa-arrow-right');
+                                submitBtn.classList.remove('bg-green-500');
+                                submitBtn.classList.add('bg-sky-500');
+                                submitBtn.disabled = false;
+                                submitBtn.style.transform = 'scale(1)';
+                            }, 3000);
+                        } else {
+                            handleError(result.message || 'Ошибка сервера');
+                        }
+                    };
+
+                    xhr.onerror = function() {
+                        handleError('Сетевая ошибка');
+                    };
+
+                    function handleError(msg) {
+                        console.error('Form error:', msg);
+                        btnText.textContent = 'Ошибка';
                         btnIcon.classList.remove('fa-spinner', 'fa-spin');
-                        btnIcon.classList.add('fa-check');
+                        btnIcon.classList.add('fa-exclamation-triangle');
                         submitBtn.classList.remove('bg-sky-500');
-                        submitBtn.classList.add('bg-green-500');
-                        submitBtn.style.transform = 'scale(1.02)';
+                        submitBtn.classList.add('bg-red-500');
+                        formError.classList.remove('hidden');
 
-                        formSuccess.classList.remove('hidden');
-                        contactForm.reset();
-
-                        // Возвращаем кнопку в исходное состояние через 3 секунды
                         setTimeout(() => {
                             btnText.textContent = 'Отправить заявку';
-                            btnIcon.classList.remove('fa-check');
+                            btnIcon.classList.remove('fa-exclamation-triangle');
                             btnIcon.classList.add('fa-arrow-right');
-                            submitBtn.classList.remove('bg-green-500');
+                            submitBtn.classList.remove('bg-red-500');
                             submitBtn.classList.add('bg-sky-500');
                             submitBtn.disabled = false;
                             submitBtn.style.transform = 'scale(1)';
                         }, 3000);
-                    } else {
-                        throw new Error(result.message || 'Ошибка отправки');
                     }
+
+                    xhr.send(formData);
                 } catch (error) {
                     console.error('Form error:', error);
-
-                    // Ошибка отправки
-                    btnText.textContent = 'Ошибка';
-                    btnIcon.classList.remove('fa-spinner', 'fa-spin');
-                    btnIcon.classList.add('fa-exclamation-triangle');
-                    submitBtn.classList.remove('bg-sky-500');
-                    submitBtn.classList.add('bg-red-500');
-
-                    formError.classList.remove('hidden');
-
-                    // Возвращаем кнопку в исходное состояние через 3 секунды
-                    setTimeout(() => {
-                        btnText.textContent = 'Отправить заявку';
-                        btnIcon.classList.remove('fa-exclamation-triangle');
-                        btnIcon.classList.add('fa-arrow-right');
-                        submitBtn.classList.remove('bg-red-500');
-                        submitBtn.classList.add('bg-sky-500');
-                        submitBtn.disabled = false;
-                        submitBtn.style.transform = 'scale(1)';
-                    }, 3000);
                 }
             });
 
